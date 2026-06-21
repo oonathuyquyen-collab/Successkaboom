@@ -154,10 +154,27 @@ LMAE4Eth & 0.750 & 0.933 & 0.980 & 0.708\\
 Max-pool MIL & 0.752 & 0.933 & 0.978 & 0.779\\
 Gated-attn MIL & 0.733 & 0.922 & 0.965 & 0.803\\
 Mean-pool MIL & 0.755 & 0.933 & 0.957 & \textbf{0.885}\\
-\textbf{Unified TMIL (ours)} & 0.743 & 0.922 & 0.984 & 0.725\\\bottomrule
+\textbf{Unified TMIL (ours)} & 0.735 & 0.922 & 0.984 & 0.725\\\bottomrule
 \end{tabular}
 \vfill
 \footnotesize Combined X-AUC \textbf{0.984}; hard subset 0.725, CI $[0.658,0.791]$. We are competitive \emph{and the only method that also localizes}; contribution is \textbf{unification}, not a new account SOTA.
+\end{frame}
+
+\begin{frame}{Account-level Precision / Recall / F1 (in-domain)}
+\centering\small
+\begin{tabular}{lccc}\toprule
+\textbf{Method} & \textbf{Precision} & \textbf{Recall} & \textbf{F1}\\\midrule
+BERT4ETH & 0.749 & 0.722 & 0.734\\
+ZipZap & 0.737 & 0.687 & 0.711\\
+TSGN & 0.722 & 0.733 & 0.727\\
+LMAE4Eth & 0.736 & \textbf{0.765} & \textbf{0.750}\\
+Gated-attn MIL & 0.736 & 0.721 & 0.728\\
+TransMIL & 0.719 & 0.745 & 0.729\\
+CLAM & 0.729 & 0.721 & 0.724\\
+\textbf{Unified TMIL (ours)} & 0.709 & \textbf{0.766} & 0.735\\\bottomrule
+\end{tabular}
+\vfill
+\footnotesize Threshold 0.5, mean over 3 seeds (ours std: P$\pm$.028, R$\pm$.040, F1$\pm$.011). Competitive F1 and \textbf{highest recall} among published detectors --- and the only model that \emph{also} localizes.
 \end{frame}
 
 \begin{frame}{Account-level AUC by negative source \& activity}

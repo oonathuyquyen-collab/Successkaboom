@@ -133,7 +133,9 @@ có nhận biết cụm trên các tài khoản độc lập.
 \section{Kết quả: Phát hiện mức Tài khoản}
 Bảng~\ref{tab:comp} báo cáo so sánh mức tài khoản với các phương pháp đã công bố và
 các biến thể gộp MIL, tất cả đều được tái cài đặt trên một bộ mã hóa BERT4ETH dùng
-chung dưới một giao thức. AUC chéo miền tổng hợp là 0.984; trên tập con khó là 0.725
+chung dưới một giao thức. Precision/Recall/F1 in-domain (Bảng~\ref{tab:prf}) đặt
+chúng tôi ở F1 $0.735$---cạnh tranh với các bộ phát hiện mạnh nhất và recall cao
+nhất ($0.766$) trong nhóm. AUC chéo miền tổng hợp là 0.984; trên tập con khó là 0.725
 (95\% CI $[0.658,0.791]$). Chúng tôi minh bạch về điều này: gộp trung bình đơn giản
 và BERT4ETH ngang bằng hoặc vượt chúng tôi về AUC âm-khó, nên đóng góp mức tài khoản
 của chúng tôi là sự \emph{hợp nhất}---chúng tôi là mục duy nhất còn định vị
@@ -272,7 +274,24 @@ Max-pool MIL & 0.752 & 0.933 & 0.978 & 0.779 \\
 Gated-attn MIL~\cite{ilse2018} & 0.733 & 0.922 & 0.965 & 0.803 \\
 Mean-pool MIL & 0.755 & 0.933 & 0.957 & \best{0.885} \\
 \midrule
-\textbf{Unified TMIL (của chúng tôi)} & 0.743 & 0.922 & 0.984 & 0.725 \\
+\textbf{Unified TMIL (của chúng tôi)} & 0.735 & 0.922 & 0.984 & 0.725 \\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[t]\centering\caption{Precision/Recall/F1 mức tài khoản in-domain
+(ngưỡng $0.5$, trung bình 3 seed; std trong ngoặc cho mô hình của chúng tôi). Mọi
+phương pháp dùng chung bộ mã hóa BERT4ETH và một giao thức. Mô hình hợp nhất của
+chúng tôi cạnh tranh về F1 và đạt recall cao nhất trong nhóm đã công bố---đồng thời
+là mô hình duy nhất \emph{còn} định vị được giao dịch.}\label{tab:prf}
+\begin{tabular}{lccc}\toprule
+\textbf{Phương pháp} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\\midrule
+BERT4ETH~\cite{bert4eth} & 0.749 & 0.722 & 0.734 \\
+ZipZap~\cite{zipzap} & 0.737 & 0.687 & 0.711 \\
+TSGN~\cite{tsgn} & 0.722 & 0.733 & 0.727 \\
+LMAE4Eth~\cite{lmae4eth} & 0.736 & \best{0.765} & \best{0.750} \\
+Gated-attn MIL~\cite{ilse2018} & 0.736 & 0.721 & 0.728 \\
+TransMIL~\cite{transmil} & 0.719 & 0.745 & 0.729 \\
+CLAM~\cite{clam} & 0.729 & 0.721 & 0.724 \\\midrule
+\textbf{Unified TMIL (của chúng tôi)} & 0.709 \footnotesize{(.028)} & \best{0.766} \footnotesize{(.040)} & 0.735 \footnotesize{(.011)} \\
 \bottomrule\end{tabular}\end{table}
 
 \begin{table}[t]\centering\caption{AUC mức tài khoản phân tầng theo mức hoạt động

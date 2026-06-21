@@ -128,8 +128,10 @@ over independent accounts.
 \section{Results: Account-level Detection}
 Table~\ref{tab:comp} reports the account-level comparison against published methods
 and MIL pooling variants, all reimplemented on a shared BERT4ETH encoder under one
-protocol. Combined cross-domain AUC is 0.984; on the hard subset it is 0.725 (95\%
-CI $[0.658,0.791]$). We are deliberate about this: simple mean-pooling and BERT4ETH
+protocol. In-domain Precision/Recall/F1 (Table~\ref{tab:prf}) place us at
+F1 $0.735$---competitive with the strongest published detectors and the highest
+recall ($0.766$) among them. Combined cross-domain AUC is 0.984; on the hard subset
+it is 0.725 (95\% CI $[0.658,0.791]$). We are deliberate about this: simple mean-pooling and BERT4ETH
 match or exceed us on the hard-negative AUC, so our account-level contribution is
 the \emph{unification}---we are the only entry that additionally localizes---not a
 new account-level state of the art. Table~\ref{tab:strat} stratifies by activity:
@@ -268,7 +270,24 @@ Max-pool MIL & 0.752 & 0.933 & 0.978 & 0.779 \\
 Gated-attn MIL~\cite{ilse2018} & 0.733 & 0.922 & 0.965 & 0.803 \\
 Mean-pool MIL & 0.755 & 0.933 & 0.957 & \best{0.885} \\
 \midrule
-\textbf{Unified TMIL (ours)} & 0.743 & 0.922 & 0.984 & 0.725 \\
+\textbf{Unified TMIL (ours)} & 0.735 & 0.922 & 0.984 & 0.725 \\
+\bottomrule\end{tabular}\end{table}
+
+\begin{table}[t]\centering\caption{In-domain account-level Precision/Recall/F1
+(threshold $0.5$, mean over 3 seeds; std in parentheses for ours). All methods share
+the BERT4ETH encoder and one protocol. Our unified model is competitive on F1 and
+attains the highest recall among published detectors---while being the only model
+that \emph{also} localizes transactions.}\label{tab:prf}
+\begin{tabular}{lccc}\toprule
+\textbf{Method} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\\midrule
+BERT4ETH~\cite{bert4eth} & 0.749 & 0.722 & 0.734 \\
+ZipZap~\cite{zipzap} & 0.737 & 0.687 & 0.711 \\
+TSGN~\cite{tsgn} & 0.722 & 0.733 & 0.727 \\
+LMAE4Eth~\cite{lmae4eth} & 0.736 & \best{0.765} & \best{0.750} \\
+Gated-attn MIL~\cite{ilse2018} & 0.736 & 0.721 & 0.728 \\
+TransMIL~\cite{transmil} & 0.719 & 0.745 & 0.729 \\
+CLAM~\cite{clam} & 0.729 & 0.721 & 0.724 \\\midrule
+\textbf{Unified TMIL (ours)} & 0.709 \footnotesize{(.028)} & \best{0.766} \footnotesize{(.040)} & 0.735 \footnotesize{(.011)} \\
 \bottomrule\end{tabular}\end{table}
 
 \begin{table}[t]\centering\caption{Account-level AUC stratified by activity (\#tx).

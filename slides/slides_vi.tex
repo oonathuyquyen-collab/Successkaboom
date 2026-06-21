@@ -156,10 +156,27 @@ LMAE4Eth & 0.750 & 0.933 & 0.980 & 0.708\\
 Max-pool MIL & 0.752 & 0.933 & 0.978 & 0.779\\
 Gated-attn MIL & 0.733 & 0.922 & 0.965 & 0.803\\
 Mean-pool MIL & 0.755 & 0.933 & 0.957 & \textbf{0.885}\\
-\textbf{Unified TMIL (của chúng tôi)} & 0.743 & 0.922 & 0.984 & 0.725\\\bottomrule
+\textbf{Unified TMIL (của chúng tôi)} & 0.735 & 0.922 & 0.984 & 0.725\\\bottomrule
 \end{tabular}
 \vfill
 \footnotesize X-AUC tổng hợp \textbf{0.984}; tập con khó 0.725, CI $[0.658,0.791]$. Cạnh tranh \emph{và là phương pháp duy nhất còn định vị được}; đóng góp là \textbf{hợp nhất}, không phải SOTA tài khoản mới.
+\end{frame}
+
+\begin{frame}{Precision / Recall / F1 mức tài khoản (in-domain)}
+\centering\small
+\begin{tabular}{lccc}\toprule
+\textbf{Phương pháp} & \textbf{Precision} & \textbf{Recall} & \textbf{F1}\\\midrule
+BERT4ETH & 0.749 & 0.722 & 0.734\\
+ZipZap & 0.737 & 0.687 & 0.711\\
+TSGN & 0.722 & 0.733 & 0.727\\
+LMAE4Eth & 0.736 & \textbf{0.765} & \textbf{0.750}\\
+Gated-attn MIL & 0.736 & 0.721 & 0.728\\
+TransMIL & 0.719 & 0.745 & 0.729\\
+CLAM & 0.729 & 0.721 & 0.724\\
+\textbf{Unified TMIL (của chúng tôi)} & 0.709 & \textbf{0.766} & 0.735\\\bottomrule
+\end{tabular}
+\vfill
+\footnotesize Ngưỡng 0.5, trung bình 3 seed (std của chúng tôi: P$\pm$.028, R$\pm$.040, F1$\pm$.011). F1 cạnh tranh và \textbf{recall cao nhất} trong nhóm đã công bố --- và là mô hình duy nhất \emph{còn} định vị được.
 \end{frame}
 
 \begin{frame}{AUC theo nguồn mẫu âm \& mức hoạt động}
