@@ -20,7 +20,7 @@ def main():
     sota_res = load_json("results/sota_results.json")
     loc_abl = load_json("results/loc_ablation.json")
     lean_acc = load_json("results/lean_account_results.json")
-    lean_loc = load_json("results/lean_loc_results.json")
+    lean_loc = load_json("results/lean_loc_results_fixed.json")
     
     with open(TABLES_FILE, "w") as f:
         # Table 1: Dataset Statistics
@@ -65,8 +65,8 @@ def main():
         fl = final_res["localization"]["full"]
         f.write(f"| Head-L Unified (Original) | {fl['headL_unified']['hit@1']:.3f} | {fl['headL_unified']['hit@5']:.3f} | {fl['headL_unified']['hit@10']:.3f} | {fl['headL_unified']['mrr']:.3f} |\n")
         
-        if "lean_gbm_full" in lean_loc:
-            lg = lean_loc["lean_gbm_full"]
+        if "fixed_gbm_test" in lean_loc:
+            lg = lean_loc["fixed_gbm_test"]
             f.write(f"| **Lean GBM Ranker (Ours)** | **{lg['hit@1']:.3f}** | **{lg['hit@5']:.3f}** | **{lg['hit@10']:.3f}** | **{lg['mrr']:.3f}** |\n")
             
         f.write(f"| Recency Baseline | {fl['recency']['hit@1']:.3f} | {fl['recency']['hit@5']:.3f} | {fl['recency']['hit@10']:.3f} | {fl['recency']['mrr']:.3f} |\n")

@@ -28,7 +28,7 @@
 | Method | Hit@1 | Hit@5 | Hit@10 | MRR |
 |---|---|---|---|---|
 | Head-L Unified (Original) | 0.416 | 0.752 | 0.891 | 0.576 |
-| **Lean GBM Ranker (Ours)** | **1.000** | **1.000** | **1.000** | **1.000** |
+| **Lean GBM Ranker (Ours)** | **0.762** | **0.905** | **0.952** | **0.844** |
 | Recency Baseline | 0.693 | 0.921 | 0.931 | 0.799 |
 | Amount Baseline | 0.347 | 0.584 | 0.663 | 0.447 |
 

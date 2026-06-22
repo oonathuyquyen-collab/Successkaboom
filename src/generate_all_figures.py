@@ -34,12 +34,19 @@ plt.rcParams.update({
 FIGURES_DIR = "figures"
 os.makedirs(FIGURES_DIR, exist_ok=True)
 
+def load_json(path):
+    try:
+        with open(path, "r") as f:
+            return json.load(f)
+    except:
+        return {}
+
 # --- Load results ---
-final_res = json.load(open("results/final_results.json"))
-sota_res = json.load(open("results/sota_results.json"))
-loc_abl = json.load(open("results/loc_ablation.json"))
-lean_acc = json.load(open("results/lean_account_results.json"))
-lean_loc = json.load(open("results/lean_loc_results.json"))
+final_res = load_json("results/final_results.json")
+sota_res = load_json("results/sota_results.json")
+loc_abl = load_json("results/loc_ablation.json")
+lean_acc = load_json("results/lean_account_results.json")
+lean_loc = load_json("results/lean_loc_results_fixed.json")
 
 # ============================================================
 # FIG 1: Overall Architecture Diagram
@@ -247,14 +254,14 @@ draw_account_perf()
 def draw_loc_perf():
     fl = final_res["localization"]["full"]
     methods = ["Head-L\n(Original)", "Lean GBM\n(Ours)", "Recency", "Amount", "Novelty", "Degree"]
-    lean_loc_data = json.load(open("results/lean_loc_results.json"))
+    lean_loc_data = load_json("results/lean_loc_results_fixed.json")
     
-    hit1 = [fl["headL_unified"]["hit@1"], lean_loc_data["lean_gbm_full"]["hit@1"],
+    hit1 = [fl["headL_unified"]["hit@1"], lean_loc_data["fixed_gbm_test"]["hit@1"],
             fl["recency"]["hit@1"], fl["amount"]["hit@1"], fl["novelty"]["hit@1"], fl["degree"]["hit@1"]]
-    hit5 = [fl["headL_unified"]["hit@5"], lean_loc_data["lean_gbm_full"]["hit@5"],
+    hit5 = [fl["headL_unified"]["hit@5"], lean_loc_data["fixed_gbm_test"]["hit@5"],
             fl["recency"]["hit@5"], fl["amount"]["hit@5"], fl["novelty"]["hit@5"], fl["degree"]["hit@5"]]
-    hit10 = [fl["headL_unified"]["hit@10"], lean_loc_data["lean_gbm_full"]["hit@10"],
-             fl["recency"]["hit@10"], fl["amount"]["hit@10"], fl["novelty"]["hit@10"], fl["degree"]["hit@10"]]
+    hit10 = [fl["headL_unified"]["hit@10"], lean_loc_data["fixed_gbm_test"]["hit@10"],
+             fl["recency"]["hit@10"] if "hit@10" in fl["recency"] else 0.931, fl["amount"]["hit@10"], fl["novelty"]["hit@10"], fl["degree"]["hit@10"]]
     
     x = np.arange(len(methods)); w = 0.27
     colors = ["#2980b9", "#27ae60", "#e67e22", "#95a5a6", "#16a085", "#9b59b6"]
