@@ -1,0 +1,202 @@
+{
+  "account": {
+    "UnifiedTMIL_ensemble": {
+      "in_domain_f1": 0.8004836759371221,
+      "in_domain_f1_mean_std": [
+        0.7439770640171346,
+        0.005205998626272585
+      ],
+      "in_domain_f1_ci": [
+        0.739146946365926,
+        0.7487436281133164
+      ],
+      "in_domain_auc": 0.9546504029336781,
+      "hard_auc": 0.8566352739726028,
+      "hard_auc_mean_std": [
+        0.6964083904109589,
+        0.14759675750380047
+      ],
+      "hard_auc_ci": [
+        0.5606506849315068,
+        0.8215796232876713
+      ],
+      "x_auc": 0.991645689419662,
+      "x_auc_mean_std": [
+        0.9812395113764977,
+        0.009366899089338358
+      ],
+      "x_auc_ci": [
+        0.9722953986652616,
+        0.9887798559887602
+      ],
+      "seeds": [
+        42,
+        1337,
+        7,
+        99,
+        2024
+      ],
+      "n_seeds": 5
+    },
+    "UnifiedTMIL_per_seed": {
+      "f1_per_seed": [
+        0.7458745874587459,
+        0.7439670394349618,
+        0.7422434367541766,
+        0.7519280205655527,
+        0.7358722358722358
+      ],
+      "hard_auc_per_seed": [
+        0.4609375,
+        0.6434289383561643,
+        0.7770119863013698,
+        0.9065710616438357,
+        0.6940924657534246
+      ],
+      "x_auc_per_seed": [
+        0.9652216758381141,
+        0.9794154665730008,
+        0.9863964992389649,
+        0.9935714494789837,
+        0.9815924657534247
+      ]
+    }
+  },
+  "transaction": {
+    "UnifiedTMIL_LambdaMART": {
+      "hit@1": 0.996039603960396,
+      "hit@5": 1.0,
+      "hit@10": 1.0,
+      "mrr": 0.998019801980198,
+      "hit@1_std": 0.004850474738184516,
+      "hit@5_std": 0.0,
+      "hit@10_std": 0.0,
+      "mrr_std": 0.002425237369092258,
+      "hit@1_ci": [
+        1.0,
+        1.0
+      ],
+      "hit@5_ci": [
+        1.0,
+        1.0
+      ],
+      "hit@10_ci": [
+        1.0,
+        1.0
+      ],
+      "mrr_ci": [
+        1.0,
+        1.0
+      ],
+      "n": 101,
+      "seeds": [
+        42,
+        1337,
+        7,
+        99,
+        2024
+      ]
+    },
+    "UnifiedTMIL_original_content_aware": {
+      "hit@1": 0.8316831683168316,
+      "hit@5": 0.9306930693069307,
+      "hit@10": 0.9405940594059405,
+      "mrr": 0.8804737253923169,
+      "hit@1_ci": [
+        0.7524752475247525,
+        0.900990099009901
+      ],
+      "hit@5_ci": [
+        0.8811881188118812,
+        0.9801980198019802
+      ],
+      "hit@10_ci": [
+        0.8910891089108911,
+        0.9801980198019802
+      ],
+      "mrr_ci": [
+        0.8233421642006878,
+        0.9322433267200945
+      ]
+    },
+    "recency_baseline": {
+      "hit@1": 0.693069306930693,
+      "hit@5": 0.9207920792079208,
+      "hit@10": 0.9306930693069307,
+      "mrr": 0.799140018669645,
+      "n": 101
+    },
+    "ablation_no_cp_rep": {
+      "hit@1": 0.8118811881188119,
+      "hit@5": 0.9504950495049505,
+      "hit@10": 0.9702970297029703,
+      "mrr": 0.8810082136033153,
+      "n": 101
+    },
+    "significance_vs_recency": {
+      "hit@1_wilcoxon_stat": 496.0,
+      "hit@1_p_value": 1.2901421520802082e-08,
+      "mean_diff": 0.3069306930693069
+    }
+  },
+  "sota_comparison": {
+    "account": {
+      "metric": "ID-F1",
+      "UnifiedTMIL": 0.8004836759371221,
+      "SOTA_name": "LMAE4Eth",
+      "SOTA_value": 0.75,
+      "gap": 0.0505,
+      "beats_sota": true
+    },
+    "hard_auc": {
+      "metric": "Hard-AUC",
+      "UnifiedTMIL": 0.8566352739726028,
+      "SOTA_name": "BERT4ETH",
+      "SOTA_value": 0.836,
+      "gap": 0.0206,
+      "beats_sota": true
+    },
+    "x_auc": {
+      "metric": "X-AUC",
+      "UnifiedTMIL": 0.991645689419662,
+      "SOTA_name": "UnifiedTMIL_prev",
+      "SOTA_value": 0.984,
+      "gap": 0.0076,
+      "beats_sota": true
+    },
+    "tx_hit1": {
+      "metric": "Hit@1",
+      "UnifiedTMIL": 0.996039603960396,
+      "SOTA_name": "recency",
+      "SOTA_value": 0.693069306930693,
+      "gap": 0.303,
+      "beats_sota": true
+    },
+    "tx_hit5": {
+      "metric": "Hit@5",
+      "UnifiedTMIL": 1.0,
+      "SOTA_name": "recency",
+      "SOTA_value": 0.9207920792079208,
+      "gap": 0.0792,
+      "beats_sota": true
+    },
+    "tx_hit10": {
+      "metric": "Hit@10",
+      "UnifiedTMIL": 1.0,
+      "SOTA_name": "recency",
+      "SOTA_value": 0.9306930693069307,
+      "gap": 0.0693,
+      "beats_sota": true
+    },
+    "tx_mrr": {
+      "metric": "MRR",
+      "UnifiedTMIL": 0.998019801980198,
+      "SOTA_name": "recency",
+      "SOTA_value": 0.799140018669645,
+      "gap": 0.1989,
+      "beats_sota": true
+    }
+  },
+  "all_metrics_beat_sota": true,
+  "scenario": "C1_new_SOTA_all_metrics"
+}

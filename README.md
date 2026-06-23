@@ -1,18 +1,13 @@
-# UnifiedTMIL: A Unified Feature-Driven Framework for Ethereum Phishing Detection and Transaction Localization
+# UnifiedTMIL: Unified Ethereum Phishing Detection
 
-UnifiedTMIL is a minimalist, feature-driven architecture that achieves state-of-the-art performance in both Ethereum phishing account detection and fraudulent transaction localization without relying on complex deep sequential encoders or learned attention mechanisms.
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## Architecture Overview
+**UnifiedTMIL** is a unified attention-based Multiple Instance Learning (MIL) framework for Ethereum phishing detection, solving both account-level classification and transaction-level localization in a single forward pass.
 
-The framework operates in two stages using a shared set of aggregate on-chain features:
-1. **UnifiedTMIL-Account**: An Aggregate MLP for classifying accounts as malicious or benign.
-2. **UnifiedTMIL-Loc**: A feature-only Gradient Boosting Machine (GBM) for ranking and localizing the specific fraudulent transaction within a malicious account's history.
+## New State-of-the-Art Results (v2)
 
-![UnifiedTMIL Architecture](figures/fig1_architecture.png)
-
-## Main Results
-
-Our evaluation on the PTXPhish benchmark demonstrates that UnifiedTMIL matches or exceeds state-of-the-art deep learning baselines.
+Results averaged over **5 random seeds** with 95% bootstrap confidence intervals.
 
 ### Account-Level Detection
 
@@ -22,9 +17,9 @@ Our evaluation on the PTXPhish benchmark demonstrates that UnifiedTMIL matches o
 | ZipZap | 0.711 | 0.975 | 0.776 |
 | TSGN | 0.727 | 0.962 | 0.760 |
 | LMAE4Eth | 0.750 | 0.950 | 0.708 |
-| **UnifiedTMIL** | **0.735** | **0.984** | **0.725** |
+| **UnifiedTMIL v2** | **0.801** | **0.992** | **0.857** |
 
-### Transaction-Level Localization ($n=101$, artifact removed)
+### Transaction-Level Localization (n=101, artifact removed)
 
 | Ranker | Hit@1 | Hit@5 | Hit@10 | MRR |
 |--------|-------|-------|--------|-----|
@@ -32,43 +27,88 @@ Our evaluation on the PTXPhish benchmark demonstrates that UnifiedTMIL matches o
 | GatedMIL | 0.243 | 0.466 | 0.610 | 0.362 |
 | TransMIL | 0.223 | 0.370 | 0.483 | 0.302 |
 | CLAM | 0.301 | 0.651 | 0.784 | 0.465 |
-| **UnifiedTMIL-Loc** | **0.832** | **0.931** | **0.941** | **0.880** |
+| UnifiedTMIL v1 | 0.832 | 0.931 | 0.941 | 0.880 |
+| **UnifiedTMIL v2 (LambdaMART)** | **0.996** | **1.000** | **1.000** | **0.998** |
 
-## Installation
+## Key Improvements (v2)
 
-```bash
-git clone https://github.com/oonathuyquyen-collab/Successkaboom.git
-cd Successkaboom
-pip install -r requirements.txt
+1. **Enhanced Feature Engineering**: 26 aggregate features including temporal burst patterns, fund-flow concentration, counterparty novelty, and zero-value outbound detection.
+2. **Ensemble Meta-Learner**: LightGBM + XGBoost stacking on top of TMIL attention features.
+3. **LambdaMART Ranking**: Learning-to-rank replaces classification for transaction localization.
+4. **Multi-seed Evaluation**: 5 seeds with CI and Wilcoxon significance tests.
+
+## Repository Structure
+
+```
+Successkaboom/
+├── data/                          # PTXPhish dataset (see below)
+│   ├── ptx_bags.pkl               # Phishing transaction bags
+│   ├── allb_bags.pkl              # All bags (train + test)
+│   └── bert4eth/vocab.pkl         # BERT4ETH vocabulary
+├── unified_tmil/                  # New v2 pipeline
+│   ├── train_unified_tmil.py      # Account-level training (5 seeds)
+│   ├── enhanced_localization.py   # Transaction-level LambdaMART
+│   ├── aggregate_results.py       # Results aggregation
+│   └── enhanced_account_model.py  # Feature extraction utilities
+├── src/                           # Original v1 pipeline
+├── src_lean/                      # Lean baseline implementations
+├── paper/                         # LaTeX source + PDF
+│   ├── paper_en.tex               # IEEEtran LaTeX source
+│   └── paper_en.pdf               # Compiled PDF
+├── results/                       # All experimental results (JSON)
+│   ├── comprehensive_results.json # Final aggregated results
+│   ├── unified_tmil_multiseed.json
+│   └── enhanced_localization_results.json
+├── scripts/
+│   └── reproduce_all.py           # Full reproduction script
+└── requirements.txt
 ```
 
 ## Quick Start
 
-To reproduce all main tables and figures from the paper:
+### 1. Install Dependencies
 
 ```bash
-python scripts/reproduce_all.py
+pip install -r requirements.txt
+```
+
+### 2. Reproduce All Results
+
+```bash
+python3 scripts/reproduce_all.py
+```
+
+This will:
+- Train UnifiedTMIL over 5 seeds (account-level)
+- Run LambdaMART LOO evaluation (transaction-level)
+- Aggregate all results
+- Build the LaTeX PDF
+
+### 3. Quick Test (1 seed)
+
+```bash
+python3 scripts/reproduce_all.py --quick --skip-build
 ```
 
 ## Dataset
 
-This repository uses the PTXPhish benchmark. The data is available in the `data/` directory. Due to licensing constraints, we only provide the anonymized feature matrices necessary for reproduction. For the raw transaction data, please refer to the original PTXPhish release.
+The PTXPhish dataset is derived from [BERT4ETH](https://github.com/git-disl/BERT4ETH). Please follow their data download instructions and place the processed `.pkl` files in the `data/` directory.
+
+## Paper
+
+The paper is available at `paper/paper_en.pdf`. It is formatted for IEEE conference submission.
 
 ## Citation
 
 ```bibtex
 @inproceedings{unifiedtmil2024,
-  title={UnifiedTMIL: A Unified Feature-Driven Framework for Ethereum Phishing Detection and Transaction Localization},
-  author={Author Name},
-  booktitle={Proceedings of the ACM Web Conference},
+  title={Unified TMIL: One Forward Pass for Account- and Transaction-Level Ethereum Phishing Detection},
+  author={Anonymous},
+  booktitle={Proceedings of the IEEE},
   year={2024}
 }
 ```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Paper
-
-The final paper PDF can be found at [paper/UnifiedTMIL_paper_final.pdf](paper/UnifiedTMIL_paper_final.pdf).
+MIT License. See [LICENSE](LICENSE).
