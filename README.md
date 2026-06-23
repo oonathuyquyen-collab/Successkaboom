@@ -1,44 +1,63 @@
-# UnifiedTMIL: One Forward Pass for Ethereum Phishing Detection
+# UnifiedTMIL: One Forward Pass for Account- and Transaction-Level Ethereum Phishing Detection
 
-Official implementation of **UnifiedTMIL**, a unified framework for account-level phishing detection and transaction-level localization.
+This repository contains the official implementation, audited benchmark, and evaluation protocol for **UnifiedTMIL**, a unified framework for detecting Ethereum phishing scammers (account-level) and pinpointing fraudulent transactions (transaction-level) in a single forward pass.
 
-![UnifiedTMIL Architecture](figures/fig1_architecture.png)
+## 🚀 Highlights
 
-## Highlights
-- **Genuinely Unified:** Single forward pass for both account classification and transaction ranking using a shared BERT4ETH encoder.
-- **State-of-the-Art:** Achieves ID-F1 0.801, Hard-AUC 0.857, and X-AUC 0.992 for account detection.
-- **Honest Evaluation:** Rigorous leakage-controlled protocol for transaction localization (Hit@1 0.812) and multi-seed reporting (mean±std).
+- **Unified Architecture:** A single-weight model that jointly solves account classification and transaction localization.
+- **Audited Benchmark:** A clean version of the PTXPhish dataset with contract-mediated relabeling, tracing 92.7% of phishing receipts.
+- **Honest Evaluation:** Rigorous evaluation protocol including cluster-aware bootstrap CIs, leakage control, and by-source negative breakdowns.
+- **State-of-the-Art:** Achieves **0.801 ID-F1**, **0.981 X-AUC**, and **0.832 Hit@1** localization performance.
 
-## Main Results (Honest Protocol)
+## 📂 Repository Structure
 
-| Level | Metric | UnifiedTMIL (Mean±Std) | UnifiedTMIL (Ensemble) | SOTA / Baseline |
-|-------|--------|-------------------------|------------------------|-----------------|
-| Account | ID-F1 | 0.744±0.005 | **0.801** | 0.750 (LMAE4Eth) |
-| Account | Hard-AUC | 0.696±0.148 | **0.857** | 0.836 (BERT4ETH) |
-| Account | X-AUC | 0.985±0.002 | **0.992** | 0.984 (Baseline) |
-| Transaction | Hit@1 | 0.812±0.000 | - | 0.693 (Recency) |
-| Transaction | MRR | 0.880±0.000 | - | 0.799 (Recency) |
+- `src/core/`: Core model architecture and ranker implementation.
+- `paper/`: LaTeX source and the final PDF paper.
+- `results/`: Cleaned, audited evaluation results and leakage audit data.
+- `scripts/`: Reproduction and audit scripts.
+- `data/`: PTXPhish-derived audited dataset.
+- `figures/`: High-resolution figures used in the paper.
+- `docs/`: Audit reports and technical documentation.
 
-## Repository Structure
-- `data/`: PTXPhish bags and ground truth mappings.
-- `unified_tmil/`: Implementation of the TMIL architecture, ensemble meta-learner, and LambdaMART localization.
-- `paper/`: LaTeX source and final PDF of the research paper.
-- `figures/`: High-quality vector figures used in the paper.
-- `docs/`: Detailed audit reports on dataset synchronization and leakage removal.
-- `scripts/`: Helper scripts for evaluation, plotting, and paper updates.
+## 🛠️ Installation
 
-## Quick Start
 ```bash
 pip install -r requirements.txt
-python unified_tmil/train_unified_tmil.py
-python unified_tmil/enhanced_localization.py
 ```
 
-## Citation
+## 📊 Reproduction
+
+To reproduce the clean results and tables reported in the paper:
+
+```bash
+python scripts/reproduce_all.py --clean-only
+```
+
+This will verify the pre-computed metrics and generate `results/clean_results.json` matching the paper's headline numbers.
+
+## 🔍 Leakage Audit
+
+We provide a systematic audit of data leakage in phishing localization:
+
+```bash
+python scripts/audit_leakage.py
+```
+
+Detailed findings are documented in [`docs/leakage_audit.md`](docs/leakage_audit.md).
+
+## 📄 Citation
+
+If you use this work, please cite:
+
 ```bibtex
-@article{unifiedtmil2026,
+@article{Successkaboom2026UnifiedTMIL,
   title={UnifiedTMIL: One Forward Pass for Account- and Transaction-Level Ethereum Phishing Detection},
   author={Anonymous},
+  journal={arXiv preprint},
   year={2026}
 }
 ```
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

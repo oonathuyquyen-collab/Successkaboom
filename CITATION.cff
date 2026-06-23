@@ -1,8 +1,0 @@
-cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
-authors:
-  - family-names: "Anonymous"
-    given-names: "Author"
-title: "UnifiedTMIL: A Unified Feature-Driven Framework for Ethereum Phishing Detection"
-version: 1.0.0
-date-released: 2024-06-23
