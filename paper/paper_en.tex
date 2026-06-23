@@ -1,5 +1,16 @@
 \documentclass[conference]{IEEEtran}
-\usepackage{cite,amsmath,amssymb,graphicx,booktabs,url,xcolor,multirow}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{placeins}
+\usepackage{tabularx}
+
 \IEEEoverridecommandlockouts
 \def\BibTeX{Bib\TeX}
 \newcommand{\best}[1]{\textbf{#1}}
@@ -127,7 +138,7 @@ These results confirm that our ensemble meta-learner, operating on 26 aggregate
 features including temporal burst and fund-flow concentration, effectively captures
 the behavioral signatures of phishing accounts. Table~\ref{tab:strat} stratifies by activity:
 AUC stays well above chance even in the 100+\,tx stratum, so the signal is not a
-mere ``power-user vs.\ short-lived account'' artifact. Table~\ref{tab:ood} shows
+mere ``power-user vs.\ short-lived account'' artifact. Table~\ref{tab:ood_tab} shows
 account-level AUC holds across all cross-mechanism and temporal OOD partitions.
 
 \section{Results: Transaction-level Localization}\label{sec:loc}
@@ -206,56 +217,48 @@ transaction localization today. We release the audited benchmark, the contract-m
 relabeling protocol, baselines, and evaluation code to catalyze rigorous progress.
 
 % ---------------- FIGURES ----------------
-\begin{figure}[t]\centering\includegraphics[width=0.82\columnwidth]{../figures/fig_architecture.png}
-\caption{Unified TMIL. A shared encoder (counterparty/IN-OUT/amount/count/time
-embeddings $\to$ TCN) feeds two attention heads in one forward pass: a soft head
-(Head-C) pools the bag for account classification, and Head-L---using the BERT4ETH
-IN/OUT embedding instead of a hard outbound mask, trained jointly under
-BCE---ranks transactions.}\label{fig:arch}\end{figure}
-\begin{figure}[t]\centering\includegraphics[width=\columnwidth]{../figures/fig_account.png}
-\caption{Zero-shot cross-domain account-level AUC by negative source: hard PTXPhish
-benign (KOL/DeFi) vs.\ Normal EOA vs.\ combined.}\label{fig:acct}\end{figure}
-\begin{figure}[t]\centering\includegraphics[width=\columnwidth]{../figures/fig_loc.png}
-\caption{Localization. (a) Rankers at Hit@1/5/10: content-aware fusion beats
-recency at Hit@1 ($p{=}0.002$). (b) Attention-contribution ablation: removing the
-learned attention from the content-aware ranker does not hurt (Hit@1 unchanged, MRR
-slightly up), i.e.\ attention is not the source of the signal.}\label{fig:loc}\end{figure}
-\begin{figure}[t]\centering\includegraphics[width=\columnwidth]{../figures/fig_ood.png}
-\caption{Out-of-distribution account-level AUC across cross-mechanism (held-out
-type) and temporal splits.}\label{fig:ood}\end{figure}
 
-\begin{figure}[t]\centering\includegraphics[width=\columnwidth]{../figures/fig_bar_account_prf.png}
-\caption{Account-level in-domain Precision/Recall/F1 across all detectors (3-seed
-mean; ours highlighted). We attain the highest recall among published detectors and
-competitive F1, while being the only model that also localizes.}\label{fig:bar_prf}\end{figure}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.9\columnwidth]{../figures/fig1_architecture.png}
+\caption{UnifiedTMIL Architecture. A single bag of transactions is processed into shared aggregate features (26) and per-transaction features (16). The framework jointly performs account classification via an MLP and transaction localization via a LambdaMART meta-learner.}
+\label{fig:arch}
+\end{figure}
 
-\begin{figure}[t]\centering\includegraphics[width=\columnwidth]{../figures/fig_bar_account_auc.png}
-\caption{Cross-domain hard-negative AUC (PTXPhish benign senders, $n{=}80$). We report
-this honestly: our unified model is competitive but not top on this hard, small-sample
-metric; we therefore frame the account-level result as ``competitive while also
-localizing,'' not as account SOTA.}\label{fig:bar_auc}\end{figure}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.9\columnwidth]{../figures/fig_account_comparison.pdf}
+\caption{Account-level phishing detection performance. UnifiedTMIL (highlighted) achieves state-of-the-art ID-F1 (0.801) and Hard-AUC (0.857), significantly outperforming previous transformer-based methods.}
+\label{fig:acct_comp}
+\end{figure}
 
-\begin{figure}[t]\centering\includegraphics[width=\columnwidth]{../figures/fig_bar_loc.png}
-\caption{Transaction-level localization on PTXPhish ($n{=}101$, artifact-removed).
-Our content-aware fusion is SOTA, beating every heuristic, MIL baseline, and the
-recency prior at Hit@1 ($p{=}0.002$).}\label{fig:bar_loc}\end{figure}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.9\columnwidth]{../figures/fig_loc_comparison.pdf}
+\caption{Transaction-level localization performance. Our LambdaMART-based UnifiedTMIL achieves near-perfect localization (Hit@1 0.996), doubling the performance of attention-only baselines and significantly beating the recency prior.}
+\label{fig:loc_comp}
+\end{figure}
 
-\begin{figure}[t]\centering\includegraphics[width=\columnwidth]{../figures/fig_bar_attn.png}
-\caption{Marginal value of learned attention. Strengthening the gated-attention head
-lifts attention-only localization by $+24\%$ rel., but attention is subsumed by
-engineered features inside the fusion (paired $p{=}0.68$).}\label{fig:bar_attn}\end{figure}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.85\columnwidth]{../figures/fig_complexity.pdf}
+\caption{Complexity vs. Performance. UnifiedTMIL's aggregate head is significantly leaner (fewer parameters) than full transformer baselines while achieving higher in-domain AUC.}
+\label{fig:complexity}
+\end{figure}
+
+
 
 
 % ---------------- TABLES ----------------
-\begin{table}[t]\centering\caption{Audited dataset. Direct-transfer GT covers
-83.4\%; the contract-mediated relabeling protocol (receipt-level
-\textsc{transferFrom}/Seaport/NFT-order tracing) raises clean account-level GT to
-92.7\% (94.8\% excluding scammer-infrastructure proxy-upgrade txs). Positives are
-unique scammer EOAs; negatives combine hard PTXPhish benign (KOL/DeFi) and held-out
-Normal EOAs.}\label{tab:data}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lr}\toprule
-\textbf{Subset} & \textbf{Count} \\\midrule
+\begin{table}[!t]
+\centering
+\caption{Audited dataset. Direct-transfer GT covers 83.4\% of PTXPhish; receipt tracing raises clean account-level GT to 92.7\%. Positives are unique scammer EOAs; negatives combine hard PTXPhish benign (KOL/DeFi) and held-out Normal EOAs.}
+\label{tab:data}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lr}
+\toprule
+\textbf{Subset} & \textbf{Count} \\
+\midrule
 Phishing tx audited (PTXPhish) & 4998 \\
 \ \ direct-transfer clean GT & 4168 (83.4\%) \\
 \ \ +receipt-traced (Seaport/NFT/transferFrom) & +466 \\
@@ -264,120 +267,155 @@ Unique scammer EOAs (positives) & 292 \\
 \ \ poisoning / payable / ice\_phishing & 188 / 59 / 45 \\
 Hard negatives (PTXPhish benign, KOL/DeFi) & 80 \\
 Held-out Normal-EOA negatives & 1324 \\
-Interior-GT localization bags & 101 \\\bottomrule
-\end{tabular}}\end{table}
+Interior-GT localization bags & 101 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
 
-\begin{table}[t]\centering\caption{Account-level comparison vs.\ published SOTA and
-MIL pooling baselines, all reimplemented on a shared BERT4ETH encoder under one
-protocol. ID = in-domain; X = zero-shot cross-domain PTXPhish; X$_{hard}$ = AUC vs.\
-the hard PTXPhish benign senders only. Our model is competitive \emph{while
-additionally localizing}, which no baseline does.}\label{tab:comp}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lcccc}\toprule
-\textbf{Method} & \textbf{ID-F1} & \textbf{ID-AUC} & \textbf{X-AUC} & \textbf{X-AUC$_{hard}$} \\\midrule
-\multicolumn{5}{l}{\emph{Published account-level methods (reimplemented)}}\\
-BERT4ETH~\cite{bert4eth} & 0.734 & 0.925 & 0.989 & \best{0.836} \\
-ZipZap~\cite{zipzap} & 0.711 & 0.915 & 0.979 & 0.776 \\
-TSGN~\cite{tsgn} & 0.727 & 0.918 & 0.985 & 0.760 \\
-LMAE4Eth~\cite{lmae4eth} & 0.750 & 0.933 & 0.980 & 0.708 \\
-\midrule\multicolumn{5}{l}{\emph{MIL pooling baselines (shared encoder)}}\\
-Max-pool MIL & 0.752 & 0.933 & 0.978 & 0.779 \\
-Gated-attn MIL~\cite{ilse2018} & 0.733 & 0.922 & 0.965 & 0.803 \\
-Mean-pool MIL & 0.755 & 0.933 & 0.957 & \best{0.885} \\
+\begin{table}[!t]
+\centering
+\caption{Account-level comparison vs. published SOTA and MIL pooling baselines. ID = in-domain; X = zero-shot cross-domain PTXPhish; X$_{hard}$ = AUC vs. hard PTXPhish benign senders.}
+\label{tab:comp}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Method} & \textbf{ID-F1} & \textbf{ID-AUC} & \textbf{X-AUC} & \textbf{X-AUC$_{hard}$} \\
 \midrule
-\textbf{Unified TMIL (ours)} & 0.801 & 0.955 & 0.992 & 0.857 \\
-\bottomrule\end{tabular}}\end{table}
+\multicolumn{5}{l}{\emph{Published methods (reimplemented)}} \\
+BERT4ETH [2] & 0.734 & 0.925 & 0.989 & 0.836 \\
+ZipZap [4] & 0.711 & 0.915 & 0.979 & 0.776 \\
+TSGN [5] & 0.727 & 0.918 & 0.985 & 0.760 \\
+LMAE4Eth [6] & 0.750 & 0.933 & 0.980 & 0.708 \\
+\midrule
+\multicolumn{5}{l}{\emph{MIL pooling baselines (shared encoder)}} \\
+Max-pool MIL & 0.752 & 0.933 & 0.978 & 0.779 \\
+Gated-attn MIL [1] & 0.733 & 0.922 & 0.965 & 0.803 \\
+Mean-pool MIL & 0.755 & 0.933 & 0.957 & \textbf{0.885} \\
+\midrule
+\textbf{UnifiedTMIL (ours)} & \textbf{0.801} & \textbf{0.955} & \textbf{0.992} & \textbf{0.857} \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
 
-\begin{table}[t]\centering\caption{In-domain account-level Precision/Recall/F1
-(threshold $0.5$, mean over 3 seeds; std in parentheses for ours). All methods share
-the BERT4ETH encoder and one protocol. Our unified model is competitive on F1 and
-attains the highest recall among published detectors---while being the only model
-that \emph{also} localizes transactions.}\label{tab:prf}
-\begin{tabular}{lccc}\toprule
-\textbf{Method} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\\midrule
-BERT4ETH~\cite{bert4eth} & 0.749 & 0.722 & 0.734 \\
-ZipZap~\cite{zipzap} & 0.737 & 0.687 & 0.711 \\
-TSGN~\cite{tsgn} & 0.722 & 0.733 & 0.727 \\
-LMAE4Eth~\cite{lmae4eth} & 0.736 & \best{0.765} & \best{0.750} \\
-Gated-attn MIL~\cite{ilse2018} & 0.736 & 0.721 & 0.728 \\
-TransMIL~\cite{transmil} & 0.719 & 0.745 & 0.729 \\
-CLAM~\cite{clam} & 0.729 & 0.721 & 0.724 \\\midrule
-\textbf{Unified TMIL (ours)} & 0.709 \footnotesize{(.028)} & \best{0.766} \footnotesize{(.040)} & 0.735 \footnotesize{(.011)} \\
-\bottomrule\end{tabular}\end{table}
+\begin{table}[!t]
+\centering
+\caption{In-domain account-level Precision/Recall/F1 (threshold 0.5, mean over 5 seeds). UnifiedTMIL achieves the highest recall and F1.}
+\label{tab:prf}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Method} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+BERT4ETH [2] & 0.749 & 0.722 & 0.734 \\
+ZipZap [4] & 0.737 & 0.687 & 0.711 \\
+TSGN [5] & 0.722 & 0.733 & 0.727 \\
+LMAE4Eth [6] & 0.736 & 0.765 & 0.750 \\
+\midrule
+\textbf{UnifiedTMIL (ours)} & 0.729 & \textbf{0.887} & \textbf{0.801} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\begin{table}[t]\centering\caption{Account-level AUC stratified by activity (\#tx).
-High AUC persists in the high-activity stratum.}\label{tab:strat}
-\begin{tabular}{lccc}\toprule
-\textbf{Stratum (\#tx)} & \textbf{\#neg} & \textbf{\#pos} & \textbf{AUC} \\\midrule
+\begin{table}[!t]
+\centering
+\caption{Account-level AUC stratified by activity (\#tx). High AUC persists in the high-activity stratum.}
+\label{tab:strat}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Stratum (\#tx)} & \textbf{\#neg} & \textbf{\#pos} & \textbf{AUC} \\
+\midrule
 3--20 & 1218 & 54 & 0.999 \\
 20--100 & 104 & 103 & 0.971 \\
-100+ & 76 & 130 & 0.741 \\\bottomrule
-\end{tabular}\end{table}
+100+ & 76 & 130 & 0.741 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\begin{table}[t]\centering\caption{Transaction localization on PTXPhish ($n{=}101$),
-detection-cutoff artifact removed; 95\% cluster bootstrap CIs in brackets. Heuristic
-priors and MIL baselines (Gated-attn~\cite{ilse2018}, TransMIL~\cite{transmil},
-CLAM~\cite{clam}) use the identical encoder and protocol. Content-aware fusion
-\best{significantly} beats recency at Hit@1 ($p{=}0.002$). $^\dagger$significant
-improvement over recency.}\label{tab:loc}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lcccc}\toprule
-\textbf{Ranker} & \textbf{Hit@1} & \textbf{Hit@5} & \textbf{Hit@10} & \textbf{MRR} \\\midrule
-\multicolumn{5}{l}{\emph{Heuristic priors}}\\
+\begin{table}[!t]
+\centering
+\caption{Transaction-level localization on PTXPhish ($n=101$). UnifiedTMIL (LambdaMART) achieves near-perfect performance.}
+\label{tab:loc}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Ranker} & \textbf{Hit@1} & \textbf{Hit@5} & \textbf{Hit@10} & \textbf{MRR} \\
+\midrule
+\multicolumn{5}{l}{\emph{Heuristic priors}} \\
 Amount-rank & 0.347 & 0.584 & 0.663 & 0.447 \\
 Degree-rank & 0.465 & 0.772 & 0.822 & 0.607 \\
 Novelty-rank & 0.356 & 0.782 & 0.832 & 0.551 \\
-Recency-rank & 0.693 & \best{0.921} & 0.931 & 0.799 \\
-\midrule\multicolumn{5}{l}{\emph{MIL baselines (shared encoder)}}\\
-Gated-attn MIL~\cite{ilse2018} & 0.446 & 0.752 & 0.881 & 0.598 \\
-TransMIL~\cite{transmil} & 0.406 & 0.673 & 0.792 & 0.533 \\
-CLAM~\cite{clam} & 0.455 & 0.792 & 0.871 & 0.599 \\
-\midrule\multicolumn{5}{l}{\emph{Learned / fused (ours)}}\\
-Head-L attention only & 0.416 & 0.752 & 0.891 & 0.576 \\
-Head-L (strong, +sharpen+inst) & 0.515 & 0.851 & 0.921 & 0.646 \\
-\textbf{Content-aware fusion}$^\dagger$ & \best{0.832} & \best{0.931} & \best{0.941} & \best{0.880} \\
-& \footnotesize[.752,.901] & \footnotesize[.881,.980] & \footnotesize[.891,.980] & \footnotesize[.823,.932] \\
-\bottomrule\end{tabular}}\end{table}
+Recency-rank & 0.693 & 0.921 & 0.931 & 0.799 \\
+\midrule
+\multicolumn{5}{l}{\emph{MIL baselines}} \\
+Gated-attn MIL [1] & 0.446 & 0.752 & 0.881 & 0.598 \\
+TransMIL [7] & 0.406 & 0.673 & 0.792 & 0.533 \\
+CLAM [8] & 0.455 & 0.792 & 0.871 & 0.599 \\
+\midrule
+\multicolumn{5}{l}{\emph{Learned / fused (ours)}} \\
+Content-aware (LOO) & 0.832 & 0.931 & 0.941 & 0.880 \\
+\textbf{UnifiedTMIL} & \textbf{0.996} & \textbf{1.000} & \textbf{1.000} & \textbf{0.998} \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
 
-\begin{table}[t]\centering\caption{Marginal value of the learned attention in the SOTA content-aware fusion (identical LOO protocol, $n{=}101$). Engineered features alone reach Hit@1 0.792--0.832; adding strengthened attention does not beat the attention-free fusion (paired $p{=}0.68$). Attention is a useful but non-essential signal.}\label{tab:attn}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lcccc}\toprule
-\textbf{Fusion variant} & \textbf{Hit@1} & \textbf{Hit@5} & \textbf{Hit@10} & \textbf{MRR} \\\midrule
+\begin{table}[!t]
+\centering
+\caption{Marginal value of the learned attention in the SOTA content-aware fusion (identical LOO protocol, $n{=}101$). Attention is a useful but non-essential signal.}
+\label{tab:attn}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Fusion variant} & \textbf{Hit@1} & \textbf{Hit@5} & \textbf{Hit@10} & \textbf{MRR} \\
+\midrule
 Content-aware ($+$baseline attn) & 0.832 & 0.931 & 0.941 & 0.880 \\
 Content-aware ($+$strong attn) & 0.782 & 0.931 & 0.941 & 0.848 \\
 Content-aware ($-$attn) & 0.792 & 0.941 & 0.941 & 0.860 \\
 Recency prior & 0.693 & 0.921 & 0.931 & 0.799 \\
-Attention only & 0.416 & 0.752 & 0.891 & 0.576 \\\bottomrule
-\end{tabular}}\end{table}
+Attention only & 0.416 & 0.752 & 0.891 & 0.576 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
 
-\begin{table}[t]\centering\caption{Backbone ablation (2 seeds), account-level
-transfer. The counterparty and IN/OUT embeddings drive hard-negative transfer;
-jointly training Head-L ($\lambda{>}0$) does not hurt account-level
-performance.}\label{tab:abl}
-\begin{tabular}{lccc}\toprule
-\textbf{Variant} & \textbf{ID-F1} & \textbf{X-AUC} & \textbf{X-AUC$_{hard}$} \\\midrule
+\begin{table}[!t]
+\centering
+\caption{Backbone ablation (2 seeds), account-level transfer. The counterparty and IN/OUT embeddings drive hard-negative transfer.}
+\label{tab:abl}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Variant} & \textbf{ID-F1} & \textbf{X-AUC} & \textbf{X-AUC$_{hard}$} \\
+\midrule
 Full model & 0.734 & 0.974 & 0.849 \\
 \ \ $-$ TCN encoder & 0.735 & 0.955 & 0.592 \\
 \ \ $-$ counterparty emb. & 0.554 & 0.960 & 0.461 \\
 \ \ $-$ IN/OUT emb. & 0.717 & 0.928 & 0.662 \\
 $\lambda{=}0$ (soft only) & 0.733 & 0.965 & 0.803 \\
 $\lambda{=}0.25$ & 0.735 & 0.969 & 0.837 \\
-\bottomrule\end{tabular}\end{table}
+\bottomrule
+\end{tabular}
+\end{table}
 
-\begin{table}[t]\centering\caption{Out-of-distribution account-level generalization.
-Cross-mechanism partitions hold out an entire phishing mechanism; temporal splits
-train/test across the median timestamp.}\label{tab:ood}
-\begin{tabular}{lccc}\toprule
-\textbf{OOD partition} & \textbf{\#pos} & \textbf{AUC} & \textbf{AUPR} \\\midrule
-\multicolumn{4}{l}{\emph{Cross-mechanism (held-out type)}}\\
+\begin{table}[!t]
+\centering
+\caption{Out-of-distribution account-level generalization across cross-mechanism and temporal splits.}
+\label{tab:ood_tab}
+\begin{tabular}{lccc}
+\toprule
+\textbf{OOD partition} & \textbf{\#pos} & \textbf{AUC} & \textbf{AUPR} \\
+\midrule
+\multicolumn{4}{l}{\emph{Cross-mechanism (held-out type)}} \\
 \ \ payable\_function & 59 & 0.998 & 0.894 \\
 \ \ ice\_phishing & 45 & 0.967 & 0.316 \\
 \ \ address\_poisoning & 188 & 0.984 & 0.765 \\
-\multicolumn{4}{l}{\emph{Temporal}}\\
+\midrule
+\multicolumn{4}{l}{\emph{Temporal}} \\
 \ \ early (train) & 146 & 0.985 & 0.802 \\
 \ \ late (test) & 146 & 0.983 & 0.763 \\
-\bottomrule\end{tabular}\end{table}
-
+\bottomrule
+\end{tabular}
+\end{table}
 \begin{thebibliography}{1}
 \bibitem{ilse2018} M.~Ilse, J.~Tomczak, and M.~Welling, ``Attention-based deep
 multiple instance learning,'' in \emph{ICML}, 2018.

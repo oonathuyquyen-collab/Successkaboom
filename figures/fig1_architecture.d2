@@ -1,53 +1,59 @@
 direction: right
 
-input: {
-  label: "Ethereum Account\n(Transaction Bag)"
-  shape: rectangle
-  style.fill: "#EBF5FB"
-  style.stroke: "#2E86C1"
-  style.font-size: 14
+account: Ethereum Account {
+  shape: cylinder
+  description: "Transaction Bag (T_1, ..., T_N)"
 }
 
-fe: {
-  label: "Aggregate Feature Engineering\n(Shared On-Chain Features)"
+fe: Feature Engineering {
   shape: rectangle
-  style.fill: "#D5F5E3"
-  style.stroke: "#1E8449"
-  style.font-size: 14
+  style: {
+    stroke-width: 2
+    fill: "#f9f9f9"
+  }
+  
+  agg: Aggregate Features {
+    description: "26 features (shared)"
+  }
+  
+  tx: Per-Transaction Features {
+    description: "16 features (localization)"
+  }
 }
 
-account: {
-  label: "UnifiedTMIL-Account\n(Aggregate MLP)\n\nX-AUC: 0.984\nHard-AUC: 0.725"
-  shape: rectangle
-  style.fill: "#FDEBD0"
-  style.stroke: "#D35400"
-  style.font-size: 13
+account -> fe
+
+subgraph UnifiedTMIL {
+  style: {
+    stroke-width: 2
+    stroke-dash: 5
+    fill: "#eef2ff"
+  }
+  
+  mlp: Account Classification {
+    shape: rectangle
+    description: "Aggregate MLP (8->32->16->1)"
+  }
+  
+  gbm: Transaction Localization {
+    shape: rectangle
+    description: "LambdaMART / GBM Stacker"
+  }
 }
 
-loc: {
-  label: "UnifiedTMIL-Loc\n(Feature-Only GBM)\n\nHit@1: 0.832\nMRR: 0.880"
-  shape: rectangle
-  style.fill: "#F9EBEA"
-  style.stroke: "#C0392B"
-  style.font-size: 13
-}
+fe.agg -> mlp
+fe.tx -> gbm
+mlp -> gbm: "Head-C Predictions (Stacked)"
 
-out1: {
-  label: "Account Label\n(Phishing / Benign)"
+output: {
+  label: Phishing Label
   shape: oval
-  style.fill: "#EBF5FB"
-  style.stroke: "#2E86C1"
 }
 
-out2: {
-  label: "Ranked Transactions\n(Localization)"
-  shape: oval
-  style.fill: "#EBF5FB"
-  style.stroke: "#2E86C1"
+ranked: {
+  label: Ranked Transactions
+  shape: parallelogram
 }
 
-input -> fe: {label: "raw txns"}
-fe -> account: {label: "aggregate\nfeatures"}
-fe -> loc: {label: "per-tx\nfeatures"}
-account -> out1
-loc -> out2
+mlp -> output
+gbm -> ranked
