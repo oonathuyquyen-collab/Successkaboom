@@ -155,4 +155,12 @@ def main():
 
 
 if __name__ == "__main__":
+    # If called with --clean-only, just produce clean_results.json without retraining
+    if "--clean-only" in sys.argv:
+        import subprocess
+        result = subprocess.run(
+            [sys.executable, os.path.join(ROOT, "scripts", "produce_clean_results.py")],
+            cwd=ROOT
+        )
+        sys.exit(result.returncode)
     main()

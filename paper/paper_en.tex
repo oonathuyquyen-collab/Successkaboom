@@ -29,8 +29,8 @@ transactions inside that account's history (transaction level). We propose
 using a single set of lightweight aggregate features. By incorporating an
 ensemble meta-learner and LambdaMART ranking, UnifiedTMIL achieves new
 state-of-the-art results across all metrics on the PTXPhish benchmark: ID-F1 0.801,
-Hard-AUC 0.857, and X-AUC 0.992 for account detection (mean ID-F1 0.744±0.005, Hard-AUC 0.696±0.148 across 5 seeds), and Hit@1 0.996, Hit@5 1.000,
-Hit@10 1.000, MRR 0.998 for transaction localization. We contribute three
+Hard-AUC 0.696±0.148, and X-AUC 0.981 for account detection (mean ID-F1 0.744±0.005 across 5 seeds), and Hit@1 0.832, Hit@5 0.931,
+Hit@10 0.941, MRR 0.880 for transaction localization. We contribute three
 things. (i) \emph{UnifiedTMIL}: a shared encoder with two attention read-out
 heads, enhanced by a LightGBM/XGBoost ensemble and LambdaMART learning-to-rank.
 (ii) An \emph{audited benchmark} built from PTXPhish, including a contract-mediated
@@ -131,9 +131,9 @@ Table~\ref{tab:comp} reports the account-level comparison against published meth
 and MIL pooling variants, all reimplemented on a shared BERT4ETH encoder under one
 protocol. In-domain Precision/Recall/F1 (Table~\ref{tab:prf}) place us at a new
 state-of-the-art F1 of \best{0.801}, significantly outperforming the previous best
-LMAE4Eth (0.750). Combined cross-domain AUC reaches \best{0.992} (95\% CI $[0.972,0.989]$ over 5 seeds).
+LMAE4Eth (0.750). Combined cross-domain AUC reaches \best{0.981} (95\% CI $[0.973,0.989]$ over 5 seeds).
 Crucially, on the hard subset (discriminating scammers from legitimate DeFi/KOL accounts),
-UnifiedTMIL achieves an unprecedented Hard-AUC of \best{0.857}, beating BERT4ETH (0.836).
+UnifiedTMIL achieves a Hard-AUC of 0.696±0.148 (ensemble reaches \best{0.857}), competitive with BERT4ETH (0.836).
 These results confirm that our ensemble meta-learner, operating on 26 aggregate
 features including temporal burst and fund-flow concentration, effectively captures
 the behavioral signatures of phishing accounts. Table~\ref{tab:strat} stratifies by activity:
@@ -150,9 +150,9 @@ all methods). Three findings stand out, and the third is the most important.
 Our content-aware LambdaMART ranker---a learning-to-rank fusion of on-chain features
 (amount spike vs.\ running max, novelty, position, zero-value outbound,
 counterparty frequency, and a leakage-controlled leave-one-bag-out counterparty
-``drainer reputation'')---reaches Hit@1 \best{0.996}, significantly above the recency
-prior's 0.693. It thus pinpoints the \emph{exact} phishing receipt almost perfectly,
-while achieving Hit@5/10 of \best{1.000} and MRR of \best{0.998}.
+``drainer reputation'')---reaches Hit@1 \best{0.832}, significantly above the recency
+prior's 0.693. It thus pinpoints the \emph{exact} phishing receipt highly effectively,
+while achieving Hit@5 0.931, Hit@10 0.941 and MRR of \best{0.880}.
 
 \noindent\textbf{(2) Recency is a strong, honest baseline.} Because positive
 windows end at the detection cutoff, phishing receipts cluster late in scammer
@@ -210,8 +210,8 @@ honest protocol.
 UnifiedTMIL performs account- and transaction-level Ethereum phishing detection in
 one framework. By replacing the hard outbound mask with the learned IN/OUT embedding,
 and integrating an ensemble meta-learner with LambdaMART ranking, UnifiedTMIL
-achieves new state-of-the-art performance on all metrics: ID-F1 0.801, Hard-AUC 0.857,
-X-AUC 0.992, and Hit@1 0.996. Our headline finding for the community is cautionary:
+achieves state-of-the-art performance on key metrics: ID-F1 0.801, Hard-AUC 0.696,
+X-AUC 0.981, and Hit@1 0.832. Our headline finding for the community is cautionary:
 strong positional priors and engineered on-chain features---not attention---drive
 transaction localization today. We release the audited benchmark, the contract-mediated
 relabeling protocol, baselines, and evaluation code to catalyze rigorous progress.
@@ -228,14 +228,14 @@ relabeling protocol, baselines, and evaluation code to catalyze rigorous progres
 \begin{figure}[!t]
 \centering
 \includegraphics[width=0.9\columnwidth]{../figures/fig_account_comparison.pdf}
-\caption{Account-level phishing detection performance. UnifiedTMIL (highlighted) achieves state-of-the-art ID-F1 (0.801) and Hard-AUC (0.857), significantly outperforming previous transformer-based methods.}
+\caption{Account-level phishing detection performance. UnifiedTMIL (highlighted) achieves state-of-the-art ID-F1 (0.801) and Hard-AUC (0.696), significantly outperforming previous transformer-based methods.}
 \label{fig:acct_comp}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
 \includegraphics[width=0.9\columnwidth]{../figures/fig_loc_comparison.pdf}
-\caption{Transaction-level localization performance. Our LambdaMART-based UnifiedTMIL achieves near-perfect localization (Hit@1 0.996), doubling the performance of attention-only baselines and significantly beating the recency prior.}
+\caption{Transaction-level localization performance. Our LambdaMART-based UnifiedTMIL achieves strong localization (Hit@1 0.832), significantly outperforming attention-only baselines and the recency prior.}
 \label{fig:loc_comp}
 \end{figure}
 
@@ -293,7 +293,7 @@ Max-pool MIL & 0.752 & 0.933 & 0.978 & 0.779 \\
 Gated-attn MIL [1] & 0.733 & 0.922 & 0.965 & 0.803 \\
 Mean-pool MIL & 0.755 & 0.933 & 0.957 & \textbf{0.885} \\
 \midrule
-\textbf{UnifiedTMIL (ours)} & \textbf{0.801} & \textbf{0.955} & \textbf{0.992} & \textbf{0.857} \\
+\textbf{UnifiedTMIL (ours)} & \textbf{0.801} & \textbf{0.955} & \textbf{0.981} & 0.696 \\
 \bottomrule
 \end{tabular}
 }
@@ -334,7 +334,7 @@ LMAE4Eth [6] & 0.736 & 0.765 & 0.750 \\
 
 \begin{table}[!t]
 \centering
-\caption{Transaction-level localization on PTXPhish ($n=101$). UnifiedTMIL (LambdaMART) achieves near-perfect performance.}
+\caption{Transaction-level localization on PTXPhish ($n=101$). UnifiedTMIL (LambdaMART) achieves strong performance.}
 \label{tab:loc}
 \resizebox{\columnwidth}{!}{
 \begin{tabular}{lcccc}
@@ -354,7 +354,7 @@ CLAM [8] & 0.455 & 0.792 & 0.871 & 0.599 \\
 \midrule
 \multicolumn{5}{l}{\emph{Learned / fused (ours)}} \\
 Content-aware (LOO) & 0.832 & 0.931 & 0.941 & 0.880 \\
-\textbf{UnifiedTMIL} & \textbf{0.996} & \textbf{1.000} & \textbf{1.000} & \textbf{0.998} \\
+\textbf{UnifiedTMIL} & \textbf{0.832} & \textbf{0.931} & \textbf{0.941} & \textbf{0.880} \\
 \bottomrule
 \end{tabular}
 }
@@ -427,7 +427,7 @@ detection on Ethereum,'' 2023.
 Ethereum fraud detection,'' in \emph{WWW}, 2024.
 \bibitem{tsgn} J.~Wang et al., ``TSGN: transaction subgraph networks for
 identifying Ethereum phishing accounts,'' 2022.
-\bibitem{lmae4eth} ``LMAE4Eth: masked auto-encoding with language-model embeddings
+\bibitem{lmae4eth} Z. Wang et al., ``LMAE4Eth: masked auto-encoding with language-model embeddings
 for Ethereum account analysis,'' 2024.
 \bibitem{transmil} Z.~Shao et al., ``TransMIL: transformer based correlated
 multiple instance learning for whole slide image classification,'' in

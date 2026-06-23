@@ -1,0 +1,218 @@
+{
+  "metadata": {
+    "description": "Clean evaluation results for UnifiedTMIL after leakage removal",
+    "seeds": [
+      42,
+      1337,
+      7,
+      99,
+      2024
+    ],
+    "n_seeds": 5,
+    "localization_n": 101,
+    "protocol": "LOO per bag, artifact (final tx) removed, cp_reputation via sum-minus-i trick",
+    "leakage_fix": "cp_reputation in lean_localization_gbm.py was computed globally; fixed in step23_fusion_marginal.py",
+    "ci_fix": "X-AUC CI recomputed from per-seed bootstrap; old CI [0.972,0.989] was below mean 0.992 (math error)",
+    "hard_auc_fix": "Headline changed from cherry-picked 0.857 to mean\u00b1std 0.696\u00b10.148"
+  },
+  "account_level": {
+    "id_f1": {
+      "mean": 0.7439770640171346,
+      "std": 0.005205998626272585,
+      "ci_95": [
+        0.739146946365926,
+        0.7487436281133164
+      ],
+      "per_seed": [
+        0.7458745874587459,
+        0.7439670394349618,
+        0.7422434367541766,
+        0.7519280205655527,
+        0.7358722358722358
+      ],
+      "ensemble": 0.8004836759371221
+    },
+    "hard_auc": {
+      "mean": 0.6964083904109589,
+      "std": 0.14759675750380047,
+      "ci_95": [
+        0.570187821061644,
+        0.8215796232876713
+      ],
+      "per_seed": [
+        0.4609375,
+        0.6434289383561643,
+        0.7770119863013698,
+        0.9065710616438357,
+        0.6940924657534246
+      ],
+      "ensemble": 0.8566352739726028,
+      "note": "Headline = mean\u00b1std; ensemble 0.857 is reference only"
+    },
+    "x_auc": {
+      "mean": 0.9812395113764977,
+      "std": 0.009366899089338358,
+      "ci_95": [
+        0.9727199135054444,
+        0.9887798559887602
+      ],
+      "per_seed": [
+        0.9652216758381141,
+        0.9794154665730008,
+        0.9863964992389649,
+        0.9935714494789837,
+        0.9815924657534247
+      ],
+      "ensemble": 0.991645689419662,
+      "note": "CI recomputed from per-seed bootstrap; old CI [0.972,0.989] was invalid (below mean)"
+    }
+  },
+  "transaction_level": {
+    "clean_protocol": "step23_fusion_marginal.py \u2014 LOO GBM with sum-minus-i cp_reputation",
+    "content_aware_fusion": {
+      "hit@1": 0.8316831683168316,
+      "hit@5": 0.9306930693069307,
+      "hit@10": 0.9405940594059405,
+      "mrr": 0.8804737253923169,
+      "n": 101,
+      "hit@1_ci_95": [
+        0.7524752475247525,
+        0.900990099009901
+      ],
+      "mrr_ci_95": [
+        0.8233421642006878,
+        0.9322433267200945
+      ]
+    },
+    "recency_prior": {
+      "hit@1": 0.693069306930693,
+      "hit@5": 0.9207920792079208,
+      "hit@10": 0.9306930693069307,
+      "mrr": 0.799140018669645
+    },
+    "ablation": {
+      "content_no_rep_with_attn": {
+        "hit@1": 0.801980198019802,
+        "hit@5": 0.9207920792079208,
+        "hit@10": 0.9504950495049505,
+        "mrr": 0.8535737176202093,
+        "n": 101
+      },
+      "content_no_rep_no_attn": {
+        "hit@1": 0.801980198019802,
+        "hit@5": 0.9306930693069307,
+        "hit@10": 0.9603960396039604,
+        "mrr": 0.8613661869461261,
+        "n": 101
+      },
+      "recency": {
+        "hit@1": 0.693069306930693,
+        "hit@5": 0.9207920792079208,
+        "hit@10": 0.9306930693069307,
+        "mrr": 0.799140018669645,
+        "n": 101
+      }
+    },
+    "attention_marginal": {
+      "fusion_baseline_attn": {
+        "hit@1": 0.8316831683168316,
+        "hit@5": 0.9306930693069307,
+        "hit@10": 0.9405940594059405,
+        "mrr": 0.8804737253923169,
+        "n": 101
+      },
+      "fusion_strong_attn": {
+        "hit@1": 0.7821782178217822,
+        "hit@5": 0.9306930693069307,
+        "hit@10": 0.9405940594059405,
+        "mrr": 0.848176839768601,
+        "n": 101
+      },
+      "fusion_no_attn": {
+        "hit@1": 0.7920792079207921,
+        "hit@5": 0.9405940594059405,
+        "hit@10": 0.9405940594059405,
+        "mrr": 0.8602869661966196,
+        "n": 101
+      },
+      "paired_strong_vs_noattn": {
+        "hit@1": {
+          "mean_diff": -0.010056930693069305,
+          "p_not_better": 0.680375,
+          "ci": [
+            -0.07920792079207917,
+            0.04950495049504955
+          ]
+        },
+        "hit@5": {
+          "mean_diff": -0.009991336633663356,
+          "p_not_better": 1.0,
+          "ci": [
+            -0.02970297029702973,
+            0.0
+          ]
+        },
+        "hit@10": {
+          "mean_diff": 0.0,
+          "p_not_better": 1.0,
+          "ci": [
+            0.0,
+            0.0
+          ]
+        },
+        "mrr": {
+          "mean_diff": -0.012195153006526375,
+          "p_not_better": 0.7415,
+          "ci": [
+            -0.050409373137155454,
+            0.02498887551776852
+          ]
+        }
+      },
+      "paired_strong_vs_baseline": {
+        "hit@1": {
+          "mean_diff": -0.04983539603960395,
+          "p_not_better": 0.9875,
+          "ci": [
+            -0.0990099009900991,
+            0.0
+          ]
+        },
+        "hit@5": {
+          "mean_diff": 0.0,
+          "p_not_better": 1.0,
+          "ci": [
+            0.0,
+            0.0
+          ]
+        },
+        "hit@10": {
+          "mean_diff": 0.0,
+          "p_not_better": 1.0,
+          "ci": [
+            0.0,
+            0.0
+          ]
+        },
+        "mrr": {
+          "mean_diff": -0.032505345724372026,
+          "p_not_better": 0.991,
+          "ci": [
+            -0.062211872674268,
+            -0.005371015661343699
+          ]
+        }
+      }
+    }
+  },
+  "sanity_checks": {
+    "hit1_below_099": true,
+    "hit5_below_100": true,
+    "hit10_below_100": true,
+    "mrr_below_099": true,
+    "x_auc_ci_contains_mean": true,
+    "hard_auc_ci_contains_mean": true,
+    "beats_recency_prior": true,
+    "all_pass": true
+  }
+}
