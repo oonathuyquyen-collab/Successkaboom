@@ -1,5 +1,5 @@
 """
-Lean SOTA - Account-Level Detection
+UnifiedTMIL - Account-Level Detection
 Replaces UnifiedTMIL with a lightweight MLP on aggregate bag features.
 """
 import sys, os, json, pickle, random
@@ -159,7 +159,7 @@ def main():
                 
         return {"auc": float(auc), "auc_ci": boot_ci(f_auc), "aupr": float(aupr), "by_source": bysrc, "stratified": strat}
 
-    print("Training Lean SOTA MLP...")
+    print("Training UnifiedTMIL MLP...")
     m = train_lean_mlp(X_train, y_train, seed=SEEDS[0])
     p_test = predict_lean_mlp(m, X_test)
     p_cross = predict_lean_mlp(m, X_cross)

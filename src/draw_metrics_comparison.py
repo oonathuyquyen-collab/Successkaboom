@@ -1,5 +1,5 @@
 """
-Draw metric comparison charts: Original vs Lean SOTA
+Draw metric comparison charts: Original vs UnifiedTMIL
 Outputs: figures/fig_metrics_comparison.png
 """
 import matplotlib
@@ -16,14 +16,14 @@ colors = {
     'ZipZap': '#6e40c9',
     'TSGN': '#3fb950',
     'LMAE4Eth': '#f0883e',
-    'Readykaboom\n(TMIL)': '#da3633',
-    'Lean SOTA\n(Proposed)': '#58a6ff',
+    'UnifiedTMIL\n(TMIL)': '#da3633',
+    'UnifiedTMIL\n(Proposed)': '#58a6ff',
 }
 
 # ---- Plot 1: Account-level F1 ----
 ax = axes[0]
 ax.set_facecolor('#161b22')
-models = ['BERT4ETH', 'ZipZap', 'TSGN', 'LMAE4Eth', 'Readykaboom\n(TMIL)', 'Lean SOTA\n(Proposed)']
+models = ['BERT4ETH', 'ZipZap', 'TSGN', 'LMAE4Eth', 'UnifiedTMIL\n(TMIL)', 'UnifiedTMIL\n(Proposed)']
 f1_scores = [0.734, 0.711, 0.721, 0.718, 0.735, 0.742]
 bar_colors = [colors[m] for m in models]
 bars = ax.bar(models, f1_scores, color=bar_colors, edgecolor='#30363d', linewidth=1.2, width=0.6)
@@ -41,7 +41,7 @@ ax.spines['right'].set_visible(False)
 ax.set_facecolor('#161b22')
 ax.yaxis.label.set_color('white')
 ax.xaxis.label.set_color('white')
-# Highlight lean SOTA bar
+# Highlight UnifiedTMIL bar
 bars[-1].set_edgecolor('#3fb950')
 bars[-1].set_linewidth(3)
 
@@ -75,7 +75,7 @@ ax.legend(facecolor='#161b22', edgecolor='#30363d', labelcolor='white', fontsize
 # ---- Plot 3: Localization Hit@K ----
 ax = axes[2]
 ax.set_facecolor('#161b22')
-loc_methods = ['Recency\nPrior', 'Head-L\n(Strong)', 'GatedMIL', 'CLAM', 'Readykaboom\nFusion', 'Lean SOTA\n(GBM Only)']
+loc_methods = ['Recency\nPrior', 'Head-L\n(Strong)', 'GatedMIL', 'CLAM', 'UnifiedTMIL\nFusion', 'UnifiedTMIL\n(GBM Only)']
 hit1 = [0.693, 0.515, 0.446, 0.455, 0.832, 0.845]
 hit5 = [0.921, 0.851, 0.752, 0.792, 0.931, 0.941]
 hit10 = [0.931, 0.921, 0.881, 0.871, 0.941, 0.950]
@@ -96,14 +96,14 @@ ax.spines['left'].set_color('#30363d')
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.legend(['Hit@1', 'Hit@5', 'Hit@10'], facecolor='#161b22', edgecolor='#30363d', labelcolor='white', fontsize=8)
-# Annotate lean SOTA
+# Annotate UnifiedTMIL
 ax.annotate('★ SOTA', xy=(5 - width, 0.845), xytext=(4.2, 0.92),
             arrowprops=dict(arrowstyle='->', color='#3fb950', lw=1.5),
             fontsize=9, color='#3fb950', fontweight='bold')
 
-plt.suptitle('Performance Comparison: Original Readykaboom vs Lean SOTA',
+plt.suptitle('Performance Comparison: Original UnifiedTMIL vs UnifiedTMIL',
              fontsize=14, color='white', fontweight='bold', y=1.02)
 plt.tight_layout()
-plt.savefig('/home/ubuntu/Readykaboom/figures/fig_metrics_comparison.png',
+plt.savefig('/home/ubuntu/UnifiedTMIL/figures/fig_metrics_comparison.png',
             dpi=150, bbox_inches='tight', facecolor='#0d1117')
 print("Saved: figures/fig_metrics_comparison.png")

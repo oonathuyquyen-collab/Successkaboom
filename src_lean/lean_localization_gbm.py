@@ -1,5 +1,5 @@
 """
-Lean SOTA - Transaction-Level Localization
+UnifiedTMIL - Transaction-Level Localization
 Replaces Head-L with a robust Gradient Boosting Ranker using explicit features.
 """
 import sys, os, json, pickle
@@ -159,7 +159,7 @@ def main():
             sc[h] = m.predict_proba(Xte)[:, 1]
         return sc
 
-    print("Training Full Lean SOTA Ranker (LOO)...")
+    print("Training Full UnifiedTMIL Ranker (LOO)...")
     sc_full = fit_loo()
     
     print("Training Ablation: No CP Reputation...")

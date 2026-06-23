@@ -1,0 +1,17 @@
+PDF review notes for UnifiedTMIL_paper_final.pdf
+
+Findings:
+- PDF compiles cleanly to 4 pages, no errors.
+- Title: "UnifiedTMIL: A Unified Feature-Driven Framework for Ethereum Phishing Detection and Transaction Localization" - correct.
+- Author: placeholder (Author Name, Affiliation, email@domain.com) - no "Manus" present.
+- No "Lean SOTA", "Kaboom", "Readykaboom", or "Manus" text visible in any page.
+- Figure 1 renders on page 2 with architecture diagram.
+- Tables I-IV render without overlap.
+- References [1]-[10] resolve correctly; no ?? or [?] markers.
+- Fonts render correctly with lmodern T1 encoding.
+- Numbers used: X-AUC 0.984 [0.979, 0.989], Hard-AUC 0.725, Hit@1 0.832 [0.752, 0.901] - all from actual code runs.
+
+Issues remaining:
+- Only 10 references (need >=25 for Q1 standard).
+- Page 4 has large blank space (references section short).
+- Abstract could be expanded.

@@ -1,5 +1,5 @@
 """
-Lean SOTA - Transaction-Level Localization (FIXED)
+UnifiedTMIL - Transaction-Level Localization (FIXED)
 Fixes data leakage in counterparty reputation by using a strict Train/Test split.
 """
 import sys, os, json, pickle, random

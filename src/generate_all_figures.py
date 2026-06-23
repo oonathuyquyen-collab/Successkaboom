@@ -1,5 +1,5 @@
 """
-Generate all academic figures for the SuccessKaboom paper.
+Generate all academic figures for the SuccessUnifiedTMIL paper.
 Figures:
   1. Overall Architecture (fig_arch_overview.png)
   2. Data Pipeline (fig_data_pipeline.png)

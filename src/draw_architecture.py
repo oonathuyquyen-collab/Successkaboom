@@ -1,5 +1,5 @@
 """
-Draw the architecture comparison diagram: Original Readykaboom vs Lean SOTA.
+Draw the architecture comparison diagram: Original UnifiedTMIL vs UnifiedTMIL.
 Outputs: figures/fig_lean_architecture.png
 """
 import matplotlib
@@ -29,7 +29,7 @@ def draw_original(ax):
     ax.set_facecolor('#161b22')
     ax.set_xlim(0, 10)
     ax.set_ylim(0, 14)
-    ax.set_title('Original Readykaboom Architecture\n(Over-engineered)', 
+    ax.set_title('Original UnifiedTMIL Architecture\n(Over-engineered)', 
                  fontsize=13, color='#f0883e', fontweight='bold', pad=15)
     ax.axis('off')
 
@@ -102,7 +102,7 @@ def draw_lean(ax):
     ax.set_facecolor('#161b22')
     ax.set_xlim(0, 10)
     ax.set_ylim(0, 14)
-    ax.set_title('Lean SOTA Architecture\n(Proposed Optimization)', 
+    ax.set_title('UnifiedTMIL Architecture\n(Proposed Optimization)', 
                  fontsize=13, color='#3fb950', fontweight='bold', pad=15)
     ax.axis('off')
 
@@ -176,10 +176,10 @@ fig.legend(handles=legend_elements, loc='lower center', ncol=6,
            facecolor='#161b22', edgecolor='#30363d', labelcolor='white',
            fontsize=9, bbox_to_anchor=(0.5, 0.01))
 
-plt.suptitle('Readykaboom: Original vs Lean SOTA Architecture Comparison',
+plt.suptitle('UnifiedTMIL: Original vs UnifiedTMIL Architecture Comparison',
              fontsize=15, color='white', fontweight='bold', y=0.99)
 
 plt.tight_layout(rect=[0, 0.06, 1, 0.97])
-plt.savefig('/home/ubuntu/Readykaboom/figures/fig_lean_architecture.png', 
+plt.savefig('/home/ubuntu/UnifiedTMIL/figures/fig_lean_architecture.png', 
             dpi=150, bbox_inches='tight', facecolor='#0d1117')
 print("Saved: figures/fig_lean_architecture.png")
