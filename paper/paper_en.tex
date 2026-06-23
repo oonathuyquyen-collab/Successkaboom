@@ -15,7 +15,7 @@
 \def\BibTeX{Bib\TeX}
 \newcommand{\best}[1]{\textbf{#1}}
 \begin{document}
-\title{Unified TMIL: One Forward Pass for Account- and Transaction-Level
+\title{UnifiedTMIL: One Forward Pass for Account- and Transaction-Level
 Ethereum Phishing Detection, with an Audited Benchmark and an
 Honest Localization Study}
 \author{\IEEEauthorblockN{Anonymous Submission}}
@@ -25,13 +25,13 @@ Honest Localization Study}
 We study Ethereum phishing at two granularities with a single model: deciding
 whether an account is a scammer (account level) and pinpointing the fraudulent
 transactions inside that account's history (transaction level). We propose
-\emph{Unified TMIL}, a unified framework that solves both tasks simultaneously
+\emph{UnifiedTMIL}, a unified framework that solves both tasks simultaneously
 using a single set of lightweight aggregate features. By incorporating an
 ensemble meta-learner and LambdaMART ranking, UnifiedTMIL achieves new
 state-of-the-art results across all metrics on the PTXPhish benchmark: ID-F1 0.801,
 Hard-AUC 0.857, and X-AUC 0.992 for account detection (mean ID-F1 0.744±0.005, Hard-AUC 0.696±0.148 across 5 seeds), and Hit@1 0.996, Hit@5 1.000,
 Hit@10 1.000, MRR 0.998 for transaction localization. We contribute three
-things. (i) \emph{Unified TMIL}: a shared encoder with two attention read-out
+things. (i) \emph{UnifiedTMIL}: a shared encoder with two attention read-out
 heads, enhanced by a LightGBM/XGBoost ensemble and LambdaMART learning-to-rank.
 (ii) An \emph{audited benchmark} built from PTXPhish, including a contract-mediated
 \emph{relabeling protocol} that traces execution receipts and raises clean ground
@@ -207,7 +207,7 @@ superior, by design: the contribution is unification, a clean benchmark, and an
 honest protocol.
 
 \section{Conclusion}
-Unified TMIL performs account- and transaction-level Ethereum phishing detection in
+UnifiedTMIL performs account- and transaction-level Ethereum phishing detection in
 one framework. By replacing the hard outbound mask with the learned IN/OUT embedding,
 and integrating an ensemble meta-learner with LambdaMART ranking, UnifiedTMIL
 achieves new state-of-the-art performance on all metrics: ID-F1 0.801, Hard-AUC 0.857,
@@ -456,4 +456,6 @@ Engineering}, 2021.
 \bibitem{address_poisoning} MetaMask, "Address Poisoning Scams," 2023.
 
 \end{thebibliography}
+\bibliographystyle{IEEEtran}
+\bibliography{references}
 \end{document}
