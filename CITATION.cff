@@ -1,15 +1,8 @@
 cff-version: 1.2.0
-title: "Unified TMIL: One Forward Pass for Account- and Transaction-Level Ethereum Phishing Detection"
-message: "If you use this software or benchmark, please cite it."
+message: "If you use this software, please cite it as below."
 authors:
   - family-names: "Anonymous"
-    given-names: "Submission"
+    given-names: "Author"
+title: "UnifiedTMIL: A Unified Feature-Driven Framework for Ethereum Phishing Detection"
 version: 1.0.0
-date-released: 2026-06-21
-license: MIT
-keywords:
-  - ethereum
-  - phishing detection
-  - multiple instance learning
-  - BERT4ETH
-  - blockchain security
+date-released: 2024-06-23

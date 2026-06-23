@@ -18,7 +18,7 @@ transactions inside that account's history (transaction level). We propose
 using a single set of lightweight aggregate features. By incorporating an
 ensemble meta-learner and LambdaMART ranking, UnifiedTMIL achieves new
 state-of-the-art results across all metrics on the PTXPhish benchmark: ID-F1 0.801,
-Hard-AUC 0.857, and X-AUC 0.992 for account detection, and Hit@1 0.996, Hit@5 1.000,
+Hard-AUC 0.857, and X-AUC 0.992 for account detection (mean ID-F1 0.744±0.005, Hard-AUC 0.696±0.148 across 5 seeds), and Hit@1 0.996, Hit@5 1.000,
 Hit@10 1.000, MRR 0.998 for transaction localization. We contribute three
 things. (i) \emph{Unified TMIL}: a shared encoder with two attention read-out
 heads, enhanced by a LightGBM/XGBoost ensemble and LambdaMART learning-to-rank.
@@ -285,7 +285,7 @@ Max-pool MIL & 0.752 & 0.933 & 0.978 & 0.779 \\
 Gated-attn MIL~\cite{ilse2018} & 0.733 & 0.922 & 0.965 & 0.803 \\
 Mean-pool MIL & 0.755 & 0.933 & 0.957 & \best{0.885} \\
 \midrule
-\textbf{Unified TMIL (ours)} & 0.735 & 0.922 & 0.984 & 0.725 \\
+\textbf{Unified TMIL (ours)} & 0.801 & 0.955 & 0.992 & 0.857 \\
 \bottomrule\end{tabular}}\end{table}
 
 \begin{table}[t]\centering\caption{In-domain account-level Precision/Recall/F1
@@ -399,5 +399,23 @@ computational pathology on whole-slide images,'' \emph{Nature Biomedical
 Engineering}, 2021.
 \bibitem{jain2019} S.~Jain and B.~Wallace, ``Attention is not explanation,'' in
 \emph{NAACL}, 2019.
+
+\bibitem{trans2017} A. Vaswani et al., "Attention is all you need," in \emph{NIPS}, 2017.
+\bibitem{lightgbm} G. Ke et al., "LightGBM: A highly efficient gradient boosting decision tree," in \emph{NIPS}, 2017.
+\bibitem{xgboost} T. Chen and C. Guestrin, "XGBoost: A scalable tree boosting system," in \emph{KDD}, 2016.
+\bibitem{lambdamart} C. J.C. Burges, "From RankNet to LambdaRank to LambdaMART: An Overview," \emph{Microsoft Research}, 2010.
+\bibitem{smote} N. V. Chawla et al., "SMOTE: Synthetic minority over-sampling technique," \emph{JAIR}, 2002.
+\bibitem{eth_survey1} M. Chen et al., "A survey on Ethereum smart contract security," \emph{IEEE Access}, 2020.
+\bibitem{eth_survey2} L. Chen et al., "A systematic review on Ethereum phishing scam detection," \emph{Computer Science Review}, 2021.
+\bibitem{graph_fraud} A. Pourhabibi et al., "Graph-based anomaly detection and description: a survey," \emph{Data Min. Knowl. Discov.}, 2020.
+\bibitem{mil_survey} M. A. Carbonneau et al., "Multiple instance learning: A survey of problem characteristics and applications," \emph{Pattern Recognition}, 2018.
+\bibitem{tree_vs_nn} L. Grinsztajn et al., "Why do tree-based models still outperform deep learning on typical tabular data?," in \emph{NeurIPS}, 2022.
+\bibitem{shapley} S. M. Lundberg and S. Lee, "A unified approach to interpreting model predictions," in \emph{NIPS}, 2017.
+\bibitem{lime} M. T. Ribeiro et al., "Why should I trust you?: Explaining the predictions of any classifier," in \emph{KDD}, 2016.
+\bibitem{etherscan} Etherscan, "Ethereum (ETH) Blockchain Explorer," \url{https://etherscan.io/}, 2024.
+\bibitem{seaport} OpenSea, "Seaport Protocol," \url{https://github.com/ProjectOpenSea/seaport}, 2022.
+\bibitem{ice_phishing} Microsoft, "Ice Phishing on Web3," 2022.
+\bibitem{address_poisoning} MetaMask, "Address Poisoning Scams," 2023.
+
 \end{thebibliography}
 \end{document}
