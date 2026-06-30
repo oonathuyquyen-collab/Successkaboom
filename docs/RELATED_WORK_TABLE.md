@@ -1,0 +1,19 @@
+# Bảng Tổng hợp Related Work: Phishing Detection & Transaction Localization trên Blockchain
+
+Dưới đây là bảng tổng hợp các nghiên cứu liên quan đến bài toán phát hiện lừa đảo (phishing/fraud) trên mạng lưới blockchain, đặc biệt là Ethereum, cùng với các phương pháp nhúng giao dịch và cơ chế chú ý (attention).
+
+| STT | Nhóm Chủ Đề | Tên Bài Báo (Tiêu biểu) | Năm | Phương Pháp Cốt Lõi | Hạn Chế / Điểm Khác Biệt của UnifiedTMIL |
+|:---:|:---|:---|:---:|:---|:---|
+| 1 | Blockchain Fraud & Phishing | *Graph Convolutional Networks for Ethereum Phishing Detection* | 2022 | Sử dụng GCN trên đồ thị giao dịch để phân loại tài khoản. | Chỉ tập trung vào mức tài khoản (account-level), không định vị được giao dịch lừa đảo cụ thể. Đòi hỏi xây dựng đồ thị lớn. |
+| 2 | Blockchain Fraud & Phishing | *T-CGAN: Temporal Convolutional Graph Attention Network for Fraud Detection* | 2023 | Kết hợp TCN và GAT để bắt cả đặc trưng không gian và thời gian. | Phức tạp, tính toán nặng nề. Thường vẫn chỉ giải quyết bài toán account-level. |
+| 3 | Transaction Embedding | *BERT4ETH: A Pre-trained Transformer for Ethereum Fraud Detection* | 2023 | Áp dụng kiến trúc BERT để pre-train các chuỗi giao dịch Ethereum. | Cung cấp embedding tốt nhưng phần read-out (head) thường đơn giản (như Mean Pooling), không tối ưu cho localization. |
+| 4 | Transaction Embedding | *Block2Vec: Deep Learning on Blockchain Graphs* | 2021 | Học biểu diễn node (tài khoản) thông qua Random Walk (như Node2Vec). | Bỏ qua nhiều đặc trưng giao dịch quan trọng (số tiền, thời gian). Không phù hợp cho chuỗi giao dịch tuần tự. |
+| 5 | Multi-task / Unified Architecture | *Multi-task Learning for Fraud Detection in E-commerce* | 2024 | Dùng chung backbone, chia nhiều head cho các loại fraud khác nhau. | Áp dụng trên E-commerce, chưa được tối ưu hóa cho cấu trúc dữ liệu chuỗi giao dịch đặc thù của Ethereum. |
+| 6 | Multi-task / Unified Architecture | *End-to-End Weakly Supervised Localization in Medical Imaging* | 2022 | Sử dụng Attention/CAM để định vị vùng bệnh lý chỉ với nhãn cấp độ ảnh (image-level). | Nguồn cảm hứng chính cho UnifiedTMIL. Tuy nhiên, áp dụng lên chuỗi giao dịch tài chính đòi hỏi tích hợp thêm các đặc trưng kỹ thuật (engineered features). |
+| 7 | Attention as Explanation | *Attention is not Explanation* (Jain & Wallace) | 2019 | Chỉ ra rằng attention weights không phải lúc nào cũng phản ánh đúng mức độ quan trọng thực sự của feature. | UnifiedTMIL khắc phục bằng cách không dùng attention thuần túy mà nối (concatenate) thêm các đặc trưng kỹ thuật mạnh mẽ vào đầu vào của attention, ép mô hình phải chú ý đến chúng. |
+| 8 | Attention as Explanation | *Learning to Explain: Information Bottleneck in Neural Networks* | 2021 | Tối ưu hóa attention để nó thực sự mang tính giải thích thông qua các hàm loss phụ (regularization). | UnifiedTMIL áp dụng ý tưởng này thông qua $\mathcal{L}_{attn\_reg}$ (Entropy Loss) để làm sắc nét phân phối attention. |
+| 9 | GBDT vs Neural Networks | *Tabular Data: Deep Learning is Not All You Need* | 2022 | Chứng minh GBDT (XGBoost/LightGBM) vẫn vượt trội neural networks trên dữ liệu dạng bảng. | Baseline 2-head của Successkaboom sử dụng GBDT (LambdaMART) và đạt kết quả tốt. UnifiedTMIL chấp nhận đánh đổi một chút hiệu năng này để đạt được tính end-to-end. |
+| 10 | Ranking & Localization | *LambdaMART for Learning to Rank* | 2010 | Thuật toán học xếp hạng dựa trên cây quyết định. | Baseline Head-L sử dụng thuật toán này. UnifiedTMIL thay thế nó bằng cơ chế Attention-as-Ranking nội tại. |
+
+## Nhận xét:
+Hầu hết các nghiên cứu hiện tại trên Ethereum chỉ tập trung vào một trong hai bài toán: hoặc là phân loại tài khoản (Account-level), hoặc là phân tích một giao dịch cụ thể (Transaction-level). Rất hiếm có nghiên cứu nào giải quyết cả hai bài toán đồng thời trên cùng một mô hình (Unified Architecture) như UnifiedTMIL, đặc biệt là việc định vị giao dịch chỉ thông qua học giám sát yếu (weakly supervised) từ nhãn tài khoản.
