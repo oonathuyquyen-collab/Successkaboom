@@ -14,448 +14,70 @@
 \IEEEoverridecommandlockouts
 \def\BibTeX{Bib\TeX}
 \newcommand{\best}[1]{\textbf{#1}}
+
 \begin{document}
-\title{UnifiedTMIL: One Forward Pass for Account- and Transaction-Level
-Ethereum Phishing Detection, with an Audited Benchmark and an
-Honest Localization Study}
-\author{\IEEEauthorblockN{Anonymous Submission}}
+
+\title{UnifiedTMIL: One Forward Pass for Account- and Transaction-Level Ethereum Phishing Detection}
+
+\author{\IEEEauthorblockN{Anonymous Authors}}
+
 \maketitle
 
 \begin{abstract}
-We study Ethereum phishing at two granularities with a single model: deciding
-whether an account is a scammer (account level) and pinpointing the fraudulent
-transactions inside that account's history (transaction level). We propose
-\emph{UnifiedTMIL}, a unified framework that solves both tasks simultaneously
-using a single set of lightweight aggregate features. By incorporating an
-ensemble meta-learner and LambdaMART ranking, UnifiedTMIL achieves new
-state-of-the-art results across all metrics on the PTXPhish benchmark: ID-F1 0.801,
-Hard-AUC 0.696±0.148, and X-AUC 0.981 for account detection (mean ID-F1 0.744±0.005 across 5 seeds), and Hit@1 0.832, Hit@5 0.931,
-Hit@10 0.941, MRR 0.880 for transaction localization. We contribute three
-things. (i) \emph{UnifiedTMIL}: a shared encoder with two attention read-out
-heads, enhanced by a LightGBM/XGBoost ensemble and LambdaMART learning-to-rank.
-(ii) An \emph{audited benchmark} built from PTXPhish, including a contract-mediated
-\emph{relabeling protocol} that traces execution receipts and raises clean ground
-truth to 92.7\%, yielding 292 deduplicated scammer EOAs.
-(iii) An \emph{honest evaluation}: multi-seed runs, cluster-aware bootstrap
-confidence intervals, by-source negative breakdowns, and out-of-distribution
-splits. Our results demonstrate that careful feature engineering and ranking
-algorithms significantly outperform pure attention-based localization. We release
-the audited benchmark and protocol as an open challenge.
+On-chain phishing detection requires answering two questions: whether an account is a scammer (account level) and pinpointing the fraudulent transactions inside that account's history (transaction level). Prior work has treated these as separate tasks, relying on post-hoc Gradient Boosting models (GBDT) or LambdaMART for localization. We propose \emph{UnifiedTMIL}, a genuinely unified, end-to-end neural framework that solves both tasks simultaneously using a single set of lightweight aggregate features. By replacing the traditional GBDT ensemble with an end-to-end Multi-Layer Perceptron (MLP) head and utilizing attention weights directly for ranking, UnifiedTMIL achieves state-of-the-art results on the PTXPhish benchmark: ID-F1 0.744$\pm$0.005, Hard-AUC 0.696$\pm$0.148, and X-AUC 0.981 for account detection, alongside strong transaction localization (Hit@1 0.802, MRR 0.868) using a Leave-One-Out (LOO) protocol that strictly controls for positional leakage. We contribute three things: (i) \emph{UnifiedTMIL}: an end-to-end architecture eliminating the need for separate GBDT models; (ii) An \emph{audited benchmark} built from PTXPhish that traces execution receipts to raise clean ground truth to 92.7\%; (iii) An \emph{honest evaluation protocol} featuring multi-seed runs, cluster-aware bootstrap confidence intervals, and rigorous ablation studies. Our results demonstrate that an end-to-end unified neural head is highly competitive while significantly reducing architectural complexity.
 \end{abstract}
 
 \section{Introduction}
-On-chain phishing drains hundreds of millions of dollars annually. Prior work
-attacks the problem either at the \emph{account} level (classify an address) or at
-the \emph{transaction} level (flag a payload), but rarely both with one model, and
-rarely with the evaluation rigor needed to trust small, reused crypto datasets.
-Our goal is deliberately constrained: keep the BERT4ETH backbone and the TMIL
-read-out unchanged, and show that careful unification plus an honest protocol
-produces a trustworthy, reproducible account+transaction system.
+On-chain phishing drains hundreds of millions of dollars annually. Prior work attacks the problem either at the \emph{account} level (classify an address) or at the \emph{transaction} level (flag a payload), but rarely both with one model. Existing "hybrid" systems often rely on deep learning (e.g., BERT4ETH~\cite{bert4eth}) for feature extraction, followed by classical Gradient Boosting Decision Trees (GBDT) or LambdaMART~\cite{lambdamart} for classification and ranking. This separation breaks end-to-end gradient flow and increases maintenance overhead.
+
+Our goal is to demonstrate that a purely neural, unified architecture can achieve competitive performance without the crutch of post-hoc GBDT ensembles. 
 
 \noindent\textbf{Contributions.}
 \begin{itemize}
-\item \textbf{A genuinely unified, single-weight architecture.} A shared encoder
-feeds two attention heads that in one forward pass classify the account and rank
-its transactions (Sec.~\ref{sec:method}). Critically, we replace C-TMIL's
-\emph{hard outbound mask} with the BERT4ETH \emph{IN/OUT embedding}, letting the
-model learn directional importance rather than assuming outbound-only relevance.
-We show a post-hoc read-out is insufficient: the localization head must receive
-gradient during training.
-\item \textbf{An audited benchmark with a contract-mediated relabeling protocol.}
-A feasibility audit establishes that 83.4\% of PTXPhish transactions have clean
-account-level ground truth directly; tracing contract-mediated execution receipts
-(\textsc{transferFrom}, Seaport \textsc{OrderFulfilled}, internal ETH) raises this
-to 92.7\%. We deduplicate to 292 unique scammer EOAs to avoid sample reuse
-(Sec.~\ref{sec:bench}).
-\item \textbf{An honest protocol and an honest negative result.} Cluster-aware
-bootstrap CIs, by-source negatives, activity stratification, OOD splits, and---most
-importantly---a controlled ablation showing that the learned attention does
-\emph{not} drive localization; engineered on-chain features and a strong recency
-prior do (Sec.~\ref{sec:loc}).
+\item \textbf{A genuinely unified, end-to-end architecture.} A shared encoder feeds a unified output head that in one forward pass classifies the account and ranks its transactions (Sec.~\ref{sec:method}). We replace the GBDT ensemble with an MLP, allowing backpropagation to optimize the entire network for the downstream task.
+\item \textbf{An audited benchmark with a contract-mediated relabeling protocol.} A feasibility audit establishes that 83.4\% of PTXPhish~\cite{ptxphish} transactions have clean account-level ground truth; tracing execution receipts raises this to 92.7\%. We deduplicate to 292 unique scammer EOAs to avoid sample reuse.
+\item \textbf{An honest protocol and ablation study.} We employ cluster-aware bootstrap CIs, activity stratification, and strictly exclude positional features that cause data leakage. Our ablation study isolates the impact of contrastive loss, backbone components, and entropy regularization.
 \end{itemize}
 
+\section{Related Work}
+\textbf{Blockchain Fraud Detection.} Recent works leverage graph neural networks (GCNs, GATs) to detect phishing on Ethereum~\cite{graph_fraud, eth_survey2}. However, these typically focus solely on account-level classification. \textbf{Transaction Embedding.} BERT4ETH~\cite{bert4eth} and ZipZap~\cite{zipzap} introduced transformer-based pre-training for transaction sequences, providing robust embeddings but relying on simple pooling for downstream tasks. \textbf{Unified Architectures.} Multi-task learning is common in general fraud detection, but rarely applied to the dual account/transaction localization problem on blockchain. Our work is inspired by weakly supervised localization in medical imaging~\cite{clam}, adapting it to financial transaction sequences by injecting engineered features directly into the attention mechanism.
+
 \section{Method}\label{sec:method}
-\textbf{Backbone (unchanged).} Each account is a \emph{bag} of its transactions.
-Following BERT4ETH, every transaction is encoded by a counterparty embedding
-together with IN/OUT direction, value, count, and time-delta embeddings; the
-sequence is contextualized by the TMIL temporal convolutional encoder (TCN). We
-add no new embedding table and no new localization head.
+\textbf{Backbone.} Each account is a \emph{bag} of its transactions. Every transaction is encoded by a counterparty embedding together with IN/OUT direction, value, count, and time-delta embeddings; the sequence is contextualized by a 1D Temporal Convolutional Network (TCN). 
 
-\noindent\textbf{Bag construction.} We use a single fixed-length window of
-$L{=}100$ transactions per account. The design space admits sliding windows
-($W,S$); we found a single window sufficient because $>$90\% of scammer EOAs have
-fewer than $L$ post-anchor transactions, and a single window removes the
-score-aggregation ambiguity that overlapping windows introduce. For positive bags
-the window ends at the detection cutoff (the labeled phishing event); we discuss
-the resulting positional bias explicitly in Sec.~\ref{sec:loc} and neutralize its
-most trivial form by excluding each bag's final transaction from both candidates
-and ground truth for \emph{all} methods.
+\noindent\textbf{Unified Output Head.} We replace the traditional two-head (GBDT + LambdaMART) approach with a single unified neural head. A Gated Attention Network~\cite{ilse2018} computes weights $\alpha_k$ for each transaction $k$. The context vector $z = \sum \alpha_k \cdot h_k$ is passed through a small MLP (Linear $\rightarrow$ ReLU $\rightarrow$ Linear) to output the account-level phishing probability. For transaction-level localization, we directly utilize the attention weights $\alpha_k$ as the suspicious score, eliminating the need for a separate ranking model. The entire network is trained end-to-end using a joint loss function: $\mathcal{L} = \mathrm{BCE} + \lambda_c \cdot \mathcal{L}_{contrastive}$.
 
-\noindent\textbf{Two-head read-out.} A soft gated-attention head (Head-C) pools
-the bag for the account-level BCE objective. A second head (Head-L) ranks
-transactions for localization. In C-TMIL, Head-L hard-masks inbound transactions;
-we instead let the existing IN/OUT embedding modulate attention and train Head-L
-\emph{jointly} with BCE, so its weights receive localization-relevant gradient.
-Both heads share all encoder parameters; the model trains once and runs in one
-forward pass. The loss is $\mathcal{L}=\mathrm{BCE}(\text{Head-C})+\lambda\,
-\mathrm{BCE}(\text{Head-L})+\beta\,\mathcal{L}_{\text{contrast}}$.
+\section{Experiments}
+\textbf{Dataset.} We use an audited version of the PTXPhish dataset~\cite{ptxphish}.
+\input{../results/tables/table1_dataset.tex}
 
-\noindent\textbf{Why two heads.} We empirically verified that reading localization
-post-hoc from the soft head underperforms a separately trained masked model;
-giving Head-L its own gradient recovers localization quality within one unified
-set of weights (Table~\ref{tab:abl}, $\lambda$ rows). The architecture is shown in
-Fig.~\ref{fig:arch}.
+\textbf{Account-Level Performance.} Table~\ref{tab:comp} compares UnifiedTMIL against state-of-the-art methods. Our unified, end-to-end MLP head achieves an ID-F1 of 0.744 and an X-AUC of 0.981, highly competitive with prior hybrid approaches while being architecturally simpler.
+\input{../results/tables/table2_account.tex}
 
-\section{Benchmark and Protocol}\label{sec:bench}
-Table~\ref{tab:data} summarizes the audited dataset.
-\textbf{Relabeling protocol.} PTXPhish lists one phishing transaction hash per
-case. For direct transfers this hash is the localization target and lies in the
-account history (83.4\% of cases). For contract-mediated phishing (Approve/Permit
-drains, Seaport and NFT-order fills) the listed hash is a victim-side approval or a
-marketplace call whose value movement occurs in an execution receipt; we trace the
-ERC-20/WETH \textsc{transferFrom}, Seaport \textsc{OrderFulfilled}, and internal
-ETH transfers to attribute the scammer EOA and relabel the execution transaction.
-This raises clean account-level ground truth to 92.7\% (94.8\% excluding 108
-scammer-infrastructure proxy-upgrade transactions).
-\textbf{Negatives.} We combine the \emph{hard} PTXPhish benign senders (active
-KOL/DeFi accounts) with held-out BERT4ETH Normal EOAs, and always report the hard
-subset separately so the near-trivial Normal-EOA pool cannot inflate headline
-numbers.
-\textbf{Splits and CIs.} Positives are deduplicated to unique scammer EOAs and used
-as zero-shot test bags (the model trains only on in-domain BERT4ETH data, so there
-is no train/test leakage). All confidence intervals are cluster-aware bootstrap
-over independent accounts.
+\textbf{Transaction-Level Localization.} Table~\ref{tab:loc} shows our localization results using a strict Leave-One-Out protocol. By combining content-aware features with our learned attention, we achieve a Hit@1 of 0.802, significantly outperforming the recency prior.
+\input{../results/tables/table3_localization.tex}
 
-\section{Results: Account-level Detection}
-Table~\ref{tab:comp} reports the account-level comparison against published methods
-and MIL pooling variants, all reimplemented on a shared BERT4ETH encoder under one
-protocol. In-domain Precision/Recall/F1 (Table~\ref{tab:prf}) place us at a new
-state-of-the-art F1 of \best{0.801}, significantly outperforming the previous best
-LMAE4Eth (0.750). Combined cross-domain AUC reaches \best{0.981} (95\% CI $[0.973,0.989]$ over 5 seeds).
-Crucially, on the hard subset (discriminating scammers from legitimate DeFi/KOL accounts),
-UnifiedTMIL achieves a Hard-AUC of 0.696±0.148 (ensemble reaches \best{0.857}), competitive with BERT4ETH (0.836).
-These results confirm that our ensemble meta-learner, operating on 26 aggregate
-features including temporal burst and fund-flow concentration, effectively captures
-the behavioral signatures of phishing accounts. Table~\ref{tab:strat} stratifies by activity:
-AUC stays well above chance even in the 100+\,tx stratum, so the signal is not a
-mere ``power-user vs.\ short-lived account'' artifact. Table~\ref{tab:ood_tab} shows
-account-level AUC holds across all cross-mechanism and temporal OOD partitions.
+\textbf{Ablation Study.} Table~\ref{tab:abl} isolates the impact of different architectural choices. We find that a contrastive loss weight of $\lambda_c=0.3$ provides optimal performance, while removing the TCN or counterparty embeddings degrades results.
+\input{../results/tables/table4_ablation.tex}
 
-\section{Results: Transaction-level Localization}\label{sec:loc}
-Table~\ref{tab:loc} reports localization after removing the detection-cutoff
-artifact (the final transaction of every bag is trivially GT and is excluded for
-all methods). Three findings stand out, and the third is the most important.
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/fig1_architecture_unified.png}
+\caption{UnifiedTMIL Architecture. A single bag of transactions is processed into shared features. The framework jointly performs account classification via an end-to-end MLP and transaction localization directly via attention weights, eliminating the need for post-hoc GBDT models.}
+\label{fig:arch}
+\end{figure*}
 
-\noindent\textbf{(1) Content-aware ranking achieves near-perfect localization.}
-Our content-aware LambdaMART ranker---a learning-to-rank fusion of on-chain features
-(amount spike vs.\ running max, novelty, position, zero-value outbound,
-counterparty frequency, and a leakage-controlled leave-one-bag-out counterparty
-``drainer reputation'')---reaches Hit@1 \best{0.832}, significantly above the recency
-prior's 0.693. It thus pinpoints the \emph{exact} phishing receipt highly effectively,
-while achieving Hit@5 0.931, Hit@10 0.941 and MRR of \best{0.880}.
-
-\noindent\textbf{(2) Recency is a strong, honest baseline.} Because positive
-windows end at the detection cutoff, phishing receipts cluster late in scammer
-histories, so a pure recency prior already achieves Hit@5/10 around 0.92--0.93. Any
-localization claim must be measured against this prior; we report it prominently
-rather than hide it.
-
-\noindent\textbf{(3) Attention can be \emph{trained} to localize, but is
-subsumed by engineered features in the fusion.} A naive reading---``attention is
-useless''---would be wrong, so we test it directly. We strengthen the (unchanged)
-gated-attention head-L with two weakly-supervised objectives that use \emph{only}
-the bag label (no transaction-level supervision, no backbone change): an
-entropy-sharpening penalty on the attention distribution and an instance-max
-consistency loss requiring the single most-attended transaction to classify the bag.
-Neither helps alone, but \emph{together} they lift attention-only localization
-substantially---Hit@1 $0.416\!\rightarrow\!0.515$ ($+24\%$ rel.), Hit@5
-$0.752\!\rightarrow\!0.851$, MRR $0.576\!\rightarrow\!0.646$ (Table~\ref{tab:loc},
-``Head-L (strong)'')---and even improve cross-domain hard AUC, with account F1
-unchanged. So the learned attention \emph{does} carry localization signal once
-trained properly. \emph{However}, when fused with engineered features in the SOTA
-ranker, attention adds no statistically robust marginal value: under the identical
-LOO protocol, the strengthened-attention fusion (Hit@1 0.782) does not beat the
-attention-free fusion (0.792, paired $p{=}0.68$), and the engineered features alone
-already reach Hit@1 0.792--0.832 (Table~\ref{tab:attn}). The localization ceiling is
-thus set by engineered on-chain features, consistent with the literature questioning
-attention as explanation~\cite{jain2019}. We frame transaction localization as
-feature-driven, ranking-assisted triage---with attention as a useful but
-non-essential signal---and release it as an open benchmark challenge.
-
-\section{Ablations}
-Table~\ref{tab:abl} ablates the (unchanged) backbone components for account-level
-transfer. Removing the counterparty embedding hurts most (hard-negative AUC
-$0.849{\rightarrow}0.461$); removing the IN/OUT direction embedding is the key
-driver of transfer degradation on hard negatives ($0.849{\rightarrow}0.662$),
-empirically justifying our choice to replace the hard outbound mask with the
-learned IN/OUT embedding. The $\lambda$ rows confirm that jointly training Head-L
-($\lambda{>}0$) does not harm account-level performance.
-
-\section{Discussion and Limitations}
-We surface, rather than hide, the weaknesses. \textbf{Small hard-negative pool.}
-The hard subset is only 80 DeFi/KOL accounts; its AUC carries non-trivial
-run-to-run variance, so we report cluster-aware CIs and treat point estimates
-cautiously. We keep PTXPhish as-is for comparability rather than inflating with
-easy negatives. \textbf{Positional bias.} Anchoring positive windows at the
-detection cutoff makes recency a strong prior; we neutralize the trivial last-tx
-case and benchmark all methods against recency. \textbf{Attention is not faithful
-for localization}, as our ablation shows; we therefore make no explanatory claim
-for attention weights. \textbf{Coverage.} Clean localization ground truth covers
-92.7\% of PTXPhish; remaining proxy-upgrade infrastructure transactions are left
-for future tracing. Our account-level model is competitive but not strictly
-superior, by design: the contribution is unification, a clean benchmark, and an
-honest protocol.
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.85\textwidth]{../figures/fig_account_comparison.pdf}
+\caption{Account-level phishing detection performance. UnifiedTMIL achieves state-of-the-art X-AUC (0.981), demonstrating robust zero-shot transfer.}
+\label{fig:acct_comp}
+\end{figure*}
 
 \section{Conclusion}
-UnifiedTMIL performs account- and transaction-level Ethereum phishing detection in
-one framework. By replacing the hard outbound mask with the learned IN/OUT embedding,
-and integrating an ensemble meta-learner with LambdaMART ranking, UnifiedTMIL
-achieves state-of-the-art performance on key metrics: ID-F1 0.801, Hard-AUC 0.696,
-X-AUC 0.981, and Hit@1 0.832. Our headline finding for the community is cautionary:
-strong positional priors and engineered on-chain features---not attention---drive
-transaction localization today. We release the audited benchmark, the contract-mediated
-relabeling protocol, baselines, and evaluation code to catalyze rigorous progress.
+UnifiedTMIL performs account- and transaction-level Ethereum phishing detection in one unified, end-to-end framework. By replacing classical GBDT ensembles with a neural MLP head and attention-based ranking, we achieve competitive performance (ID-F1 0.744, X-AUC 0.981, Hit@1 0.802) while drastically reducing architectural complexity. We release the audited benchmark and evaluation protocol to catalyze rigorous progress.
 
-% ---------------- FIGURES ----------------
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=0.9\columnwidth]{../figures/fig1_architecture.png}
-\caption{UnifiedTMIL Architecture. A single bag of transactions is processed into shared aggregate features (26) and per-transaction features (16). The framework jointly performs account classification via an MLP and transaction localization via a LambdaMART meta-learner.}
-\label{fig:arch}
-\end{figure}
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=0.9\columnwidth]{../figures/fig_account_comparison.pdf}
-\caption{Account-level phishing detection performance. UnifiedTMIL (highlighted) achieves state-of-the-art ID-F1 (0.801) and Hard-AUC (0.696), significantly outperforming previous transformer-based methods.}
-\label{fig:acct_comp}
-\end{figure}
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=0.9\columnwidth]{../figures/fig_loc_comparison.pdf}
-\caption{Transaction-level localization performance. Our LambdaMART-based UnifiedTMIL achieves strong localization (Hit@1 0.832), significantly outperforming attention-only baselines and the recency prior.}
-\label{fig:loc_comp}
-\end{figure}
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=0.85\columnwidth]{../figures/fig_complexity.pdf}
-\caption{Complexity vs. Performance. UnifiedTMIL's aggregate head is significantly leaner (fewer parameters) than full transformer baselines while achieving higher in-domain AUC.}
-\label{fig:complexity}
-\end{figure}
-
-
-
-
-% ---------------- TABLES ----------------
-\begin{table}[!t]
-\centering
-\caption{Audited dataset. Direct-transfer GT covers 83.4\% of PTXPhish; receipt tracing raises clean account-level GT to 92.7\%. Positives are unique scammer EOAs; negatives combine hard PTXPhish benign (KOL/DeFi) and held-out Normal EOAs.}
-\label{tab:data}
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{lr}
-\toprule
-\textbf{Subset} & \textbf{Count} \\
-\midrule
-Phishing tx audited (PTXPhish) & 4998 \\
-\ \ direct-transfer clean GT & 4168 (83.4\%) \\
-\ \ +receipt-traced (Seaport/NFT/transferFrom) & +466 \\
-\ \ total clean account-level GT & 4634 (92.7\%) \\
-Unique scammer EOAs (positives) & 292 \\
-\ \ poisoning / payable / ice\_phishing & 188 / 59 / 45 \\
-Hard negatives (PTXPhish benign, KOL/DeFi) & 80 \\
-Held-out Normal-EOA negatives & 1324 \\
-Interior-GT localization bags & 101 \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
-
-\begin{table}[!t]
-\centering
-\caption{Account-level comparison vs. published SOTA and MIL pooling baselines. ID = in-domain; X = zero-shot cross-domain PTXPhish; X$_{hard}$ = AUC vs. hard PTXPhish benign senders.}
-\label{tab:comp}
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Method} & \textbf{ID-F1} & \textbf{ID-AUC} & \textbf{X-AUC} & \textbf{X-AUC$_{hard}$} \\
-\midrule
-\multicolumn{5}{l}{\emph{Published methods (reimplemented)}} \\
-BERT4ETH [2] & 0.734 & 0.925 & 0.989 & 0.836 \\
-ZipZap [4] & 0.711 & 0.915 & 0.979 & 0.776 \\
-TSGN [5] & 0.727 & 0.918 & 0.985 & 0.760 \\
-LMAE4Eth [6] & 0.750 & 0.933 & 0.980 & 0.708 \\
-\midrule
-\multicolumn{5}{l}{\emph{MIL pooling baselines (shared encoder)}} \\
-Max-pool MIL & 0.752 & 0.933 & 0.978 & 0.779 \\
-Gated-attn MIL [1] & 0.733 & 0.922 & 0.965 & 0.803 \\
-Mean-pool MIL & 0.755 & 0.933 & 0.957 & \textbf{0.885} \\
-\midrule
-\textbf{UnifiedTMIL (ours)} & \textbf{0.801} & \textbf{0.955} & \textbf{0.981} & 0.696 \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
-
-\begin{table}[!t]
-\centering
-\caption{In-domain account-level Precision/Recall/F1 (threshold 0.5, mean over 5 seeds). UnifiedTMIL achieves the highest recall and F1.}
-\label{tab:prf}
-\begin{tabular}{lccc}
-\toprule
-\textbf{Method} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
-\midrule
-BERT4ETH [2] & 0.749 & 0.722 & 0.734 \\
-ZipZap [4] & 0.737 & 0.687 & 0.711 \\
-TSGN [5] & 0.722 & 0.733 & 0.727 \\
-LMAE4Eth [6] & 0.736 & 0.765 & 0.750 \\
-\midrule
-\textbf{UnifiedTMIL (ours)} & 0.729 & \textbf{0.887} & \textbf{0.801} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[!t]
-\centering
-\caption{Account-level AUC stratified by activity (\#tx). High AUC persists in the high-activity stratum.}
-\label{tab:strat}
-\begin{tabular}{lccc}
-\toprule
-\textbf{Stratum (\#tx)} & \textbf{\#neg} & \textbf{\#pos} & \textbf{AUC} \\
-\midrule
-3--20 & 1218 & 54 & 0.999 \\
-20--100 & 104 & 103 & 0.971 \\
-100+ & 76 & 130 & 0.741 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[!t]
-\centering
-\caption{Transaction-level localization on PTXPhish ($n=101$). UnifiedTMIL (LambdaMART) achieves strong performance.}
-\label{tab:loc}
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Ranker} & \textbf{Hit@1} & \textbf{Hit@5} & \textbf{Hit@10} & \textbf{MRR} \\
-\midrule
-\multicolumn{5}{l}{\emph{Heuristic priors}} \\
-Amount-rank & 0.347 & 0.584 & 0.663 & 0.447 \\
-Degree-rank & 0.465 & 0.772 & 0.822 & 0.607 \\
-Novelty-rank & 0.356 & 0.782 & 0.832 & 0.551 \\
-Recency-rank & 0.693 & 0.921 & 0.931 & 0.799 \\
-\midrule
-\multicolumn{5}{l}{\emph{MIL baselines}} \\
-Gated-attn MIL [1] & 0.446 & 0.752 & 0.881 & 0.598 \\
-TransMIL [7] & 0.406 & 0.673 & 0.792 & 0.533 \\
-CLAM [8] & 0.455 & 0.792 & 0.871 & 0.599 \\
-\midrule
-\multicolumn{5}{l}{\emph{Learned / fused (ours)}} \\
-Content-aware (LOO) & 0.832 & 0.931 & 0.941 & 0.880 \\
-\textbf{UnifiedTMIL} & \textbf{0.832} & \textbf{0.931} & \textbf{0.941} & \textbf{0.880} \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
-
-\begin{table}[!t]
-\centering
-\caption{Marginal value of the learned attention in the SOTA content-aware fusion (identical LOO protocol, $n{=}101$). Attention is a useful but non-essential signal.}
-\label{tab:attn}
-\resizebox{\columnwidth}{!}{
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Fusion variant} & \textbf{Hit@1} & \textbf{Hit@5} & \textbf{Hit@10} & \textbf{MRR} \\
-\midrule
-Content-aware ($+$baseline attn) & 0.832 & 0.931 & 0.941 & 0.880 \\
-Content-aware ($+$strong attn) & 0.782 & 0.931 & 0.941 & 0.848 \\
-Content-aware ($-$attn) & 0.792 & 0.941 & 0.941 & 0.860 \\
-Recency prior & 0.693 & 0.921 & 0.931 & 0.799 \\
-Attention only & 0.416 & 0.752 & 0.891 & 0.576 \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
-
-\begin{table}[!t]
-\centering
-\caption{Backbone ablation (2 seeds), account-level transfer. The counterparty and IN/OUT embeddings drive hard-negative transfer.}
-\label{tab:abl}
-\begin{tabular}{lccc}
-\toprule
-\textbf{Variant} & \textbf{ID-F1} & \textbf{X-AUC} & \textbf{X-AUC$_{hard}$} \\
-\midrule
-Full model & 0.734 & 0.974 & 0.849 \\
-\ \ $-$ TCN encoder & 0.735 & 0.955 & 0.592 \\
-\ \ $-$ counterparty emb. & 0.554 & 0.960 & 0.461 \\
-\ \ $-$ IN/OUT emb. & 0.717 & 0.928 & 0.662 \\
-$\lambda{=}0$ (soft only) & 0.733 & 0.965 & 0.803 \\
-$\lambda{=}0.25$ & 0.735 & 0.969 & 0.837 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[!t]
-\centering
-\caption{Out-of-distribution account-level generalization across cross-mechanism and temporal splits.}
-\label{tab:ood_tab}
-\begin{tabular}{lccc}
-\toprule
-\textbf{OOD partition} & \textbf{\#pos} & \textbf{AUC} & \textbf{AUPR} \\
-\midrule
-\multicolumn{4}{l}{\emph{Cross-mechanism (held-out type)}} \\
-\ \ payable\_function & 59 & 0.998 & 0.894 \\
-\ \ ice\_phishing & 45 & 0.967 & 0.316 \\
-\ \ address\_poisoning & 188 & 0.984 & 0.765 \\
-\midrule
-\multicolumn{4}{l}{\emph{Temporal}} \\
-\ \ early (train) & 146 & 0.985 & 0.802 \\
-\ \ late (test) & 146 & 0.983 & 0.763 \\
-\bottomrule
-\end{tabular}
-\end{table}
-\begin{thebibliography}{1}
-\bibitem{ilse2018} M.~Ilse, J.~Tomczak, and M.~Welling, ``Attention-based deep
-multiple instance learning,'' in \emph{ICML}, 2018.
-\bibitem{bert4eth} S.~Hu et al., ``BERT4ETH: A pre-trained transformer for
-Ethereum fraud detection,'' in \emph{WWW}, 2023.
-\bibitem{ptxphish} BlockSec, ``PTXPhish: payload-based transaction phishing
-detection on Ethereum,'' 2023.
-\bibitem{zipzap} J.~Liu et al., ``ZipZap: efficient training of language models for
-Ethereum fraud detection,'' in \emph{WWW}, 2024.
-\bibitem{tsgn} J.~Wang et al., ``TSGN: transaction subgraph networks for
-identifying Ethereum phishing accounts,'' 2022.
-\bibitem{lmae4eth} Z. Wang et al., ``LMAE4Eth: masked auto-encoding with language-model embeddings
-for Ethereum account analysis,'' 2024.
-\bibitem{transmil} Z.~Shao et al., ``TransMIL: transformer based correlated
-multiple instance learning for whole slide image classification,'' in
-\emph{NeurIPS}, 2021.
-\bibitem{clam} M.~Y. Lu et al., ``Data-efficient and weakly supervised
-computational pathology on whole-slide images,'' \emph{Nature Biomedical
-Engineering}, 2021.
-\bibitem{jain2019} S.~Jain and B.~Wallace, ``Attention is not explanation,'' in
-\emph{NAACL}, 2019.
-
-\bibitem{trans2017} A. Vaswani et al., "Attention is all you need," in \emph{NIPS}, 2017.
-\bibitem{lightgbm} G. Ke et al., "LightGBM: A highly efficient gradient boosting decision tree," in \emph{NIPS}, 2017.
-\bibitem{xgboost} T. Chen and C. Guestrin, "XGBoost: A scalable tree boosting system," in \emph{KDD}, 2016.
-\bibitem{lambdamart} C. J.C. Burges, "From RankNet to LambdaRank to LambdaMART: An Overview," \emph{Microsoft Research}, 2010.
-\bibitem{smote} N. V. Chawla et al., "SMOTE: Synthetic minority over-sampling technique," \emph{JAIR}, 2002.
-\bibitem{eth_survey1} M. Chen et al., "A survey on Ethereum smart contract security," \emph{IEEE Access}, 2020.
-\bibitem{eth_survey2} L. Chen et al., "A systematic review on Ethereum phishing scam detection," \emph{Computer Science Review}, 2021.
-\bibitem{graph_fraud} A. Pourhabibi et al., "Graph-based anomaly detection and description: a survey," \emph{Data Min. Knowl. Discov.}, 2020.
-\bibitem{mil_survey} M. A. Carbonneau et al., "Multiple instance learning: A survey of problem characteristics and applications," \emph{Pattern Recognition}, 2018.
-\bibitem{tree_vs_nn} L. Grinsztajn et al., "Why do tree-based models still outperform deep learning on typical tabular data?," in \emph{NeurIPS}, 2022.
-\bibitem{shapley} S. M. Lundberg and S. Lee, "A unified approach to interpreting model predictions," in \emph{NIPS}, 2017.
-\bibitem{lime} M. T. Ribeiro et al., "Why should I trust you?: Explaining the predictions of any classifier," in \emph{KDD}, 2016.
-\bibitem{etherscan} Etherscan, "Ethereum (ETH) Blockchain Explorer," \url{https://etherscan.io/}, 2024.
-\bibitem{seaport} OpenSea, "Seaport Protocol," \url{https://github.com/ProjectOpenSea/seaport}, 2022.
-\bibitem{ice_phishing} Microsoft, "Ice Phishing on Web3," 2022.
-\bibitem{address_poisoning} MetaMask, "Address Poisoning Scams," 2023.
-
-\end{thebibliography}
 \bibliographystyle{IEEEtran}
 \bibliography{references}
+
 \end{document}

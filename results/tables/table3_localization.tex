@@ -1,0 +1,18 @@
+\begin{table}[!t]
+\centering
+\caption{Transaction-level localization ($n=101$ bags, LOO protocol, position feature excluded). Log: results/loc\_fusion\_marginal.json.}
+\label{tab:loc}
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Method} & \textbf{Hit@1} & \textbf{Hit@5} & \textbf{Hit@10} & \textbf{MRR} \\
+\midrule
+Recency prior & 0.693 & 0.921 & 0.931 & 0.799 \\
+Attention only & 0.416 & 0.752 & 0.891 & 0.576 \\
+Content-aware ($-$attn) & 0.782 & 0.941 & 0.941 & 0.852 \\
+Content-aware ($+$baseline attn) & \textbf{0.802} & \textbf{0.941} & \textbf{0.950} & \textbf{0.868} \\
+Content-aware ($+$strong attn) & 0.802 & 0.941 & 0.941 & 0.865 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
