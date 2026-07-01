@@ -1,0 +1,169 @@
+{
+  "account_level": {
+    "baselines": {
+      "BERT4ETH": {
+        "id_f1": 0.712,
+        "id_prec": null,
+        "id_rec": null,
+        "id_auc": 0.903,
+        "id_aupr": null,
+        "hard_auc": 0.721,
+        "x_auc": 0.961,
+        "source": "PAPER"
+      },
+      "ZipZap": {
+        "id_f1": 0.698,
+        "id_prec": null,
+        "id_rec": null,
+        "id_auc": 0.891,
+        "id_aupr": null,
+        "hard_auc": 0.734,
+        "x_auc": 0.943,
+        "source": "PAPER"
+      },
+      "TSGN": {
+        "id_f1": 0.721,
+        "id_prec": null,
+        "id_rec": null,
+        "id_auc": 0.908,
+        "id_aupr": null,
+        "hard_auc": 0.748,
+        "x_auc": 0.952,
+        "source": "PAPER"
+      },
+      "LMAE4Eth": {
+        "id_f1": 0.75,
+        "id_prec": null,
+        "id_rec": null,
+        "id_auc": 0.921,
+        "id_aupr": null,
+        "hard_auc": 0.708,
+        "x_auc": 0.967,
+        "source": "PAPER"
+      },
+      "Max-pool MIL": {
+        "id_f1": 0.752,
+        "id_prec": null,
+        "id_rec": null,
+        "id_auc": 0.919,
+        "id_aupr": null,
+        "hard_auc": 0.801,
+        "x_auc": 0.971,
+        "source": "PAPER"
+      },
+      "Gated-attn MIL": {
+        "id_f1": 0.741,
+        "id_prec": null,
+        "id_rec": null,
+        "id_auc": 0.917,
+        "id_aupr": null,
+        "hard_auc": 0.823,
+        "x_auc": 0.968,
+        "source": "PAPER"
+      },
+      "Mean-pool MIL": {
+        "id_f1": 0.755,
+        "id_prec": null,
+        "id_rec": null,
+        "id_auc": 0.922,
+        "id_aupr": null,
+        "hard_auc": 0.885,
+        "x_auc": 0.974,
+        "source": "PAPER"
+      }
+    },
+    "unifiedtmil_v1": {
+      "id_f1": 0.7439770640171346,
+      "id_f1_std": 0.005205998626272585,
+      "id_prec": null,
+      "id_rec": null,
+      "id_auc": null,
+      "id_aupr": null,
+      "hard_auc": 0.6964083904109589,
+      "hard_auc_std": 0.14759675750380047,
+      "x_auc": 0.9812395113764977,
+      "x_auc_std": 0.009366899089338358,
+      "source": "LOG:results/clean_results.json"
+    },
+    "unifiedtmil_v2": {
+      "id_f1": 0.7430477658817858,
+      "id_f1_std": 0.002838888597190503,
+      "id_prec": 0.7025864642415455,
+      "id_prec_std": 0.01878758155998128,
+      "id_rec": 0.7902144772117963,
+      "id_rec_std": 0.030160857908847205,
+      "id_auc": 0.921666412463661,
+      "id_auc_std": 0.00028088336421017157,
+      "id_aupr": 0.8051776100984759,
+      "id_aupr_std": 0.005702087846226056,
+      "hard_auc": 0.8288206335616439,
+      "hard_auc_std": 0.06011344178082195,
+      "x_auc": 0.7369232386224294,
+      "source": "LOG:results/unifiedtmil_v2_sota_results.json (2-seed quick run, PENDING full 5-seed)"
+    }
+  },
+  "transaction_level": {
+    "baselines": {
+      "Degree-rank": {
+        "hit1": 0.673,
+        "hit5": 0.891,
+        "hit10": 0.921,
+        "mrr": 0.762,
+        "source": "PAPER"
+      },
+      "Amount-rank": {
+        "hit1": 0.693,
+        "hit5": 0.901,
+        "hit10": 0.931,
+        "mrr": 0.779,
+        "source": "PAPER"
+      },
+      "TransMIL": {
+        "hit1": 0.762,
+        "hit5": 0.911,
+        "hit10": 0.941,
+        "mrr": 0.831,
+        "source": "PAPER"
+      },
+      "CLAM": {
+        "hit1": 0.772,
+        "hit5": 0.921,
+        "hit10": 0.941,
+        "mrr": 0.839,
+        "source": "PAPER"
+      },
+      "LambdaMART (old)": {
+        "hit1": 0.832,
+        "hit5": 0.931,
+        "hit10": 0.941,
+        "mrr": 0.88,
+        "source": "PAPER"
+      }
+    },
+    "unifiedtmil_v1": {
+      "hit1": 0.8316831683168316,
+      "hit1_ci": [
+        0.7524752475247525,
+        0.900990099009901
+      ],
+      "hit5": 0.9306930693069307,
+      "hit10": 0.9405940594059405,
+      "mrr": 0.8804737253923169,
+      "mrr_ci": [
+        0.8233421642006878,
+        0.9322433267200945
+      ],
+      "n": 101,
+      "source": "LOG:results/clean_results.json"
+    },
+    "unifiedtmil_v2": {
+      "hit1": 0.10616438356164383,
+      "hit5": 0.4965753424657534,
+      "hit10": 0.684931506849315,
+      "mrr": 0.2666235989228756,
+      "n": 292,
+      "source": "LOG:results/unifiedtmil_v2_sota_results.json (attention-only, GBM fusion PENDING)",
+      "note": "PENDING \u2014 GBM fusion with v2 attention scores needed for fair comparison"
+    }
+  }
+}
