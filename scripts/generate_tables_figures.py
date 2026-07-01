@@ -158,13 +158,13 @@ print("Saved: results/tables/table{1,2,3,4}.tex")
 # ============================================================
 # Figure 1: Account-level comparison bar chart
 # ============================================================
-methods = ["BERT4ETH", "ZipZap", "TSGN", "LMAE4Eth", "Max-pool", "Gated-attn", "Mean-pool", "UnifiedTMIL\n(ours)"]
+methods = ["BERT4ETH", "ZipZap", "TSGN", "LMAE4Eth", "Max-pool MIL", "Gated-attn MIL", "Mean-pool MIL", "UnifiedTMIL\n(ours)"]
 id_f1   = [0.734, 0.711, 0.727, 0.750, 0.752, 0.733, 0.755, our_f1]
 x_auc   = [0.989, 0.979, 0.985, 0.980, 0.978, 0.965, 0.957, our_xauc]
 x_hard  = [0.836, 0.776, 0.760, 0.708, 0.779, 0.803, 0.885, our_hauc]
 
 fig, axes = plt.subplots(1, 3, figsize=(14, 5))
-colors = ["#4878CF"] * 7 + ["#E84646"]
+colors = ["#4878CF"] * 4 + ["#7C7C7C"] * 3 + ["#E84646"]
 x = np.arange(len(methods))
 
 for ax, vals, title, ylabel in zip(
@@ -185,9 +185,10 @@ for ax, vals, title, ylabel in zip(
                 f"{val:.3f}", ha="center", va="bottom", fontsize=7)
 
 axes[0].legend(handles=[
-    mpatches.Patch(color="#4878CF", label="Baselines"),
-    mpatches.Patch(color="#E84646", label="UnifiedTMIL (ours)")
-], fontsize=9, loc="lower right")
+	    mpatches.Patch(color="#4878CF", label="Published baselines"),
+	    mpatches.Patch(color="#7C7C7C", label="MIL pooling baselines"),
+	    mpatches.Patch(color="#E84646", label="UnifiedTMIL (ours)")
+	], fontsize=9, loc="lower right")
 
 plt.suptitle("Account-level Phishing Detection Performance", fontsize=13, fontweight="bold", y=1.02)
 plt.tight_layout()

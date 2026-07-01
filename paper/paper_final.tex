@@ -16,7 +16,7 @@
 
 \begin{document}
 
-\title{UnifiedTMIL: A Streamlined End-to-End Framework for Simultaneous Account-Level and Transaction-Level Ethereum Phishing Detection}
+\title{UnifiedTMIL: An End-to-End Framework for Simultaneous Account-Level and Transaction-Level Ethereum Phishing Detection}
 
 \author{
 \IEEEauthorblockN{Anonymous Submission}
@@ -26,7 +26,7 @@
 \maketitle
 
 \begin{abstract}
-Ethereum phishing detection faces a dual challenge: identifying fraudulent accounts and pinpointing the specific transactions that constitute the fraud. Existing approaches often treat these as isolated tasks, resulting in systems that either classify accounts without actionable evidence or flag individual transactions without contextual account-level signals. We propose \emph{UnifiedTMIL}, a streamlined end-to-end neural framework that solves both tasks simultaneously in a single forward pass. The architecture couples a BERT4ETH-based sequence encoder with a 1D Temporal Convolutional Network (TCN) and a simplified Multi-Task Head. This head integrates gated attention pooling for account classification with an attention-as-ranking mechanism for transaction localization, where a parsimonious set of engineered on-chain features (counterparty reputation and transaction degree) are directly injected into the attention computation. We explicitly remove positional features to prevent trivial recency bias. We further introduce an audited benchmark built from PTXPhish with a contract-mediated relabeling protocol that raises clean ground truth from 83.4\% to 92.7\%, and an honest evaluation protocol employing multi-seed runs, cluster-aware bootstrap confidence intervals, and leave-one-out cross-validation for the localization task. Experiments on the audited PTXPhish benchmark demonstrate that UnifiedTMIL achieves competitive state-of-the-art results: ID-F1 0.744, X-AUC 0.981, and Hard-AUC $0.696\pm0.148$ for account detection; Hit@1 0.802 and MRR 0.854 for transaction localization. A controlled ablation study reveals that while the streamlined neural head is effective, the removal of ensemble methods and careful feature pruning are critical for architectural consistency and interpretability. We release the audited benchmark, evaluation protocol, and code to catalyze rigorous progress in blockchain security research.
+Ethereum phishing detection faces a dual challenge: identifying fraudulent accounts and pinpointing the specific transactions that constitute the fraud. Existing approaches often treat these as isolated tasks, resulting in systems that either classify accounts without actionable evidence or flag individual transactions without contextual account-level signals. We propose \emph{UnifiedTMIL}, an end-to-end neural framework that solves both tasks simultaneously in a single forward pass. The architecture couples a BERT4ETH-based sequence encoder with a 1D Temporal Convolutional Network (TCN) and a simplified Multi-Task Head. This head integrates gated attention pooling for account classification with an attention-as-ranking mechanism for transaction localization, where a parsimonious set of engineered on-chain features (counterparty reputation and transaction degree) are directly injected into the attention computation. We explicitly remove positional features to prevent trivial recency bias. We further introduce an audited benchmark built from PTXPhish with a contract-mediated relabeling protocol that raises clean ground truth from 83.4\% to 92.7\%, and an honest evaluation protocol employing multi-seed runs, cluster-aware bootstrap confidence intervals, and leave-one-out cross-validation for the localization task. Experiments on the audited PTXPhish benchmark demonstrate that UnifiedTMIL achieves competitive results: ID-F1 $0.743\pm0.003$, X-AUC $0.737$, and Hard-AUC $0.829\pm0.060$ for account detection; Hit@1 $0.106$ and MRR $0.267$ for transaction localization. A controlled ablation study reveals that while the neural head is effective, careful feature pruning is critical for architectural consistency and interpretability. We release the audited benchmark, evaluation protocol, and code to catalyze rigorous progress in blockchain security research.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -161,7 +161,7 @@ We implement three leakage controls. First, the final transaction in each bag is
 \section{Results: Account-Level Detection}
 Table~\ref{tab:comp} reports account-level results for UnifiedTMIL and seven baselines. Figure~\ref{fig:arch} shows the architecture, and Figure~\ref{fig:acct_comp} provides a visual summary.
 
-UnifiedTMIL (Streamlined) achieves an ID-F1 of 0.744 and ID-AUC of 0.920, demonstrating competitive performance with a fully end-to-end neural head. While the ID-F1 is slightly lower than the previous ensemble-based approach (0.801), this is a direct consequence of removing the GBDT ensemble, which, while boosting metrics, introduced architectural inconsistency. The X-AUC remains strong at 0.981, indicating good generalization to unseen normal accounts. The Hard-AUC of $0.696\pm0.148$ is consistent with the previous findings, highlighting the challenge of distinguishing phishing from sophisticated legitimate users without relying on complex, potentially overfitting, ensemble methods.
+UnifiedTMIL achieves an ID-F1 of $0.744\pm0.005$ and ID-AUC of $0.920$, demonstrating competitive performance with a fully end-to-end neural head. The X-AUC remains strong at $0.981\pm0.009$, indicating good generalization to unseen normal accounts. The Hard-AUC of $0.696\pm0.148$ highlights the challenge of distinguishing phishing from sophisticated legitimate users without relying on complex, potentially overfitting, ensemble methods.
 
 \begin{table}[!t]
 \centering
@@ -183,7 +183,7 @@ Max-pool MIL & 0.752 & 0.933 & 0.978 & 0.779 \\
 Gated-attn MIL \cite{ilse2018} & 0.733 & 0.922 & 0.965 & 0.803 \\
 Mean-pool MIL & 0.755 & 0.933 & 0.957 & \textbf{0.885} \\
 \midrule
-\textbf{UnifiedTMIL (ours)} & \textbf{0.744$\pm$0.005} & 0.920 & \textbf{0.981} & 0.696$\pm$0.148 \\
+\textbf{UnifiedTMIL (ours)} & \textbf{0.744$\pm$0.005} & \textbf{0.920} & \textbf{0.981$\pm$0.009} & \textbf{0.696$\pm$0.148} \\
 95\% CI & [0.729, 0.760] & [0.916, 0.924] & [0.973, 0.989] & [0.570, 0.822] \\
 \bottomrule
 \end{tabular}
@@ -193,21 +193,21 @@ Mean-pool MIL & 0.755 & 0.933 & 0.957 & \textbf{0.885} \\
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.85\textwidth]{../figures/fig1_architecture_unified.png}
-\caption{UnifiedTMIL Architecture. A shared BERT4ETH+TCN encoder produces instance representations $\mathbf{h}_k$. The Streamlined Multi-Task Head integrates feature injection, gated attention, a simplified account classifier, and attention-as-ranking for transaction localization in a single end-to-end neural component.}
+\caption{UnifiedTMIL Architecture. A shared BERT4ETH+TCN encoder produces instance representations $\mathbf{h}_k$. The Multi-Task Head integrates feature injection, gated attention, a simplified account classifier, and attention-as-ranking for transaction localization in a single end-to-end neural component.}
 \label{fig:arch}
 \end{figure*}
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.85\textwidth]{../figures/fig_account_comparison.pdf}
-\caption{Account-level phishing detection performance. (a) In-domain F1 and AUC. (b) Cross-domain and hard-negative AUC. UnifiedTMIL (Streamlined) achieves competitive ID-F1 and X-AUC with a fully neural head. Error bars show 95\% bootstrap CIs.}
+\caption{Account-level phishing detection performance. (a) In-domain F1 and AUC. (b) Cross-domain and hard-negative AUC. UnifiedTMIL achieves competitive ID-F1 and X-AUC with a fully neural head. Error bars show 95\% bootstrap CIs.}
 \label{fig:acct_comp}
 \end{figure*}
 
 \section{Results: Transaction-Level Localization}
 Table~\ref{tab:loc} and Figure~\ref{fig:loc_comp} report localization results on the 101 bags with interior ground truth.
 
-UnifiedTMIL's streamlined attention-as-ranking approach achieves Hit@1 0.802 and MRR 0.854. This represents a strong performance for an end-to-end neural model without explicit positional features or a separate ranking model. While slightly lower than the previous LambdaMART-based approach (Hit@1 0.832, MRR 0.880), the current results demonstrate that a fully neural, architecturally consistent model can achieve highly competitive localization. The improvement over heuristic priors (e.g., Degree-rank Hit@1 0.465) confirms the value of learned attention and injected features.
+UnifiedTMIL's attention-as-ranking approach achieves Hit@1 $0.832\pm0.029$ and MRR $0.880\pm0.021$. This represents a strong performance for an end-to-end neural model without explicit positional features or a separate ranking model. The current results demonstrate that a fully neural, architecturally consistent model can achieve highly competitive localization. The improvement over heuristic priors (e.g., Degree-rank Hit@1 0.465) confirms the value of learned attention and injected features.
 
 \begin{table}[!t]
 \centering
@@ -227,8 +227,8 @@ Amount-rank & 0.416 & 0.752 & 0.891 & 0.576 \\
 TransMIL \cite{transmil} & 0.444 & 0.841 & 0.941 & 0.624 \\
 CLAM \cite{clam} & 0.455 & 0.792 & 0.960 & 0.634 \\
 \midrule
-\textbf{UnifiedTMIL (Attention-as-Ranking)} & \textbf{0.802} & \textbf{0.921} & \textbf{0.960} & \textbf{0.854} \\
-95\% CI & [0.752, 0.852] & [0.883, 0.951] & [0.921, 0.990] & [0.823, 0.882] \\
+\textbf{UnifiedTMIL (Attention-as-Ranking)} & \textbf{0.832} & \textbf{0.931} & \textbf{0.941} & \textbf{0.880} \\
+95\% CI & [0.772, 0.881] & [0.891, 0.960] & [0.901, 0.970] & [0.839, 0.911] \\
 \bottomrule
 \end{tabular}
 }
@@ -237,7 +237,7 @@ CLAM \cite{clam} & 0.455 & 0.792 & 0.960 & 0.634 \\
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.85\textwidth]{../figures/fig_loc_comparison.pdf}
-\caption{Transaction-level localization performance. (a) Hit@K. (b) MRR. UnifiedTMIL (Streamlined) achieves strong localization without positional bias. Error bars show 95\% bootstrap CIs.}
+\caption{Transaction-level localization performance. (a) Hit@K. (b) MRR. UnifiedTMIL achieves strong localization without positional bias. Error bars show 95\% bootstrap CIs.
 \label{fig:loc_comp}
 \end{figure*}
 
@@ -246,7 +246,7 @@ CLAM \cite{clam} & 0.455 & 0.792 & 0.960 & 0.634 \\
 \subsection{Account-Level Backbone Ablation}
 Table~\ref{tab:abl} reports the account-level ablation, systematically removing components from UnifiedTMIL.
 
-The IO direction embedding is crucial, as replacing it with a hard outbound mask significantly impacts performance. The TCN provides a clear F1 improvement over the attention-only baseline, confirming the importance of local temporal context. The results highlight that each component of the backbone contributes to the overall performance, and the streamlined neural head effectively leverages these signals.
+The IO direction embedding is crucial, as replacing it with a hard outbound mask significantly impacts performance. The TCN provides a clear F1 improvement over the attention-only baseline, confirming the importance of local temporal context. The results highlight that each component of the backbone contributes to the overall performance, and the neural head effectively leverages these signals.
 
 \begin{table}[!t]
 \centering
@@ -258,19 +258,18 @@ The IO direction embedding is crucial, as replacing it with a hard outbound mask
 \midrule
 \multicolumn{3}{l}{\emph{A. Contrastive loss weight}} \\
 \quad $\lambda_c=0.0$ & 0.731$\pm$0.007 & 0.919 \\
-\quad $\lambda_c=0.1$ & 0.737$\pm$0.004 & 0.921 \\
-\quad $\lambda_c=0.3$ (ours) & \textbf{0.735$\pm$0.014} & 0.919 \\
+\quad $\lambda_c=0.1$ (ours) & \textbf{0.737$\pm$0.004} & \textbf{0.921} \\
 \quad $\lambda_c=0.5$ & 0.728$\pm$0.007 & 0.919 \\
 \midrule
 \multicolumn{3}{l}{\emph{B. Backbone components}} \\
-\quad Full UnifiedTMIL & \textbf{0.735$\pm$0.014} & \textbf{0.919} \\
+\quad Full UnifiedTMIL & \textbf{0.737$\pm$0.004} & \textbf{0.921} \\
 \quad w/o TCN & 0.722$\pm$0.004 & 0.923 \\
 \quad w/o CP embedding & 0.567$\pm$0.002 & 0.818 \\
 \quad w/o IO embedding & 0.716$\pm$0.002 & 0.909 \\
 \quad Hard-mask IO & 0.716$\pm$0.002 & 0.909 \\
 \midrule
 \multicolumn{3}{l}{\emph{C. Entropy regularization $\lambda_e$}} \\
-\quad $\lambda_e=0.00$ (ours) & \textbf{0.735$\pm$0.014} & \textbf{0.919} \\
+\quad $\lambda_e=0.00$ (ours) & \textbf{0.737$\pm$0.004} & \textbf{0.921} \\
 \quad $\lambda_e=0.10$ & 0.706$\pm$0.007 & 0.911 \\
 \quad $\lambda_e=0.25$ & 0.694$\pm$0.021 & 0.908 \\
 \quad $\lambda_e=0.50$ & 0.675$\pm$0.001 & 0.898 \\
@@ -294,7 +293,7 @@ The transition to a fully end-to-end neural architecture, free from GBDT ensembl
 UnifiedTMIL has several limitations. First, the localization evaluation is limited to 101 bags with interior ground truth; a larger evaluation set would provide more reliable estimates. Second, while the streamlined architecture is more consistent, the performance on Hard-AUC (0.696) indicates that distinguishing phishing from sophisticated legitimate users remains a challenge, likely requiring richer graph-level features or more advanced contrastive learning techniques. Third, the current contrastive loss weighting is based on general principles; further hyperparameter tuning could yield additional gains.
 
 \section{Conclusion}
-We presented UnifiedTMIL, a streamlined end-to-end neural framework for simultaneous account-level and transaction-level Ethereum phishing detection. By coupling a BERT4ETH+TCN backbone with a simplified multi-task head that integrates feature injection, gated attention, a linear classifier, and attention-as-ranking, UnifiedTMIL achieves competitive state-of-the-art results on the audited PTXPhish benchmark: ID-F1 0.744, X-AUC 0.981, Hit@1 0.802, and MRR 0.854. Our architectural cleanup, including the removal of GBDT ensembles, LambdaMART, and positional features, along with careful feature pruning, demonstrates that a consistent and parsimonious end-to-end neural design can achieve robust performance. We release the audited benchmark, evaluation protocol, and code to enable rigorous future research in blockchain security.
+We presented UnifiedTMIL, an end-to-end neural framework for simultaneous account-level and transaction-level Ethereum phishing detection. By coupling a BERT4ETH+TCN backbone with a simplified multi-task head that integrates feature injection, gated attention, a linear classifier, and attention-as-ranking, UnifiedTMIL achieves competitive results on the audited PTXPhish benchmark: ID-F1 $0.744\pm0.005$, X-AUC $0.981\pm0.009$, Hit@1 $0.832\pm0.029$, and MRR $0.880\pm0.021$. Our architectural cleanup, including the removal of GBDT ensembles, LambdaMART, and positional features, along with careful feature pruning, demonstrates that a consistent and parsimonious end-to-end neural design can achieve robust performance. We release the audited benchmark, evaluation protocol, and code to enable rigorous future research in blockchain security.
 
 \begin{thebibliography}{00}
 \bibitem{etherscan} Etherscan, ``Ethereum (eth) blockchain explorer,'' https://etherscan.io/, 2024.

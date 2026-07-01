@@ -7,7 +7,7 @@ This repository contains the official implementation, audited benchmark, and eva
 - **Unified Architecture:** A single-weight model that jointly solves account classification and transaction localization.
 - **Audited Benchmark:** A clean version of the PTXPhish dataset with contract-mediated relabeling, tracing 92.7% of phishing receipts.
 - **Honest Evaluation:** Rigorous evaluation protocol including cluster-aware bootstrap CIs, leakage control, and by-source negative breakdowns.
-- **State-of-the-Art:** Achieves **0.801 ID-F1**, **0.981 X-AUC**, and **0.832 Hit@1** localization performance.
+- **Performance:** Achieves **0.744 ID-F1**, **0.981 X-AUC**, and **0.832 Hit@1** localization performance under a leakage-audited protocol.
 
 ## 📂 Repository Structure
 

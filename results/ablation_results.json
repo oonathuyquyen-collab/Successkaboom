@@ -6,7 +6,7 @@
     ],
     "epochs": 8,
     "device": "cpu",
-    "timestamp": "2026-07-01 06:50:54",
+    "timestamp": "2026-07-01 18:36:19",
     "note": "position feature excluded from all configs (anti-leakage)"
   },
   "A_contrastive_loss": {

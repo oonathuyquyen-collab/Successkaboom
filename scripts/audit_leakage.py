@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Load vocab
 import importlib.util
 spec = importlib.util.spec_from_file_location("vocab_def", 
-    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src", "vocab_def.py"))
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src", "core", "vocab_def.py"))
 vocab_mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(vocab_mod)
 sys.modules['vocab_def'] = vocab_mod
