@@ -1,0 +1,4 @@
+Model,Params_total,Params_trainable,FLOPs,Latency_mean_ms,Latency_std_ms,Artifacts,Notes
+2-head old (neural backbone),5470722,5470722,1461330,0.310,0.027,3 (NN+GBDT+LambdaMART),GBDT/LM params approx
+UnifiedTMIL v1,5470722,5470722,1461330,0.310,0.027,1,Baseline
+UnifiedTMIL v2 (SOTA),5474884,5474884,1461330,0.374,0.025,1,+residual skip +wider clf

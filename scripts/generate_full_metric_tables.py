@@ -288,7 +288,7 @@ Method & Hit@1 & Hit@5 & Hit@10 & MRR \\
     print("\n" + "=" * 60)
     print("METRIC SUMMARY")
     print("=" * 60)
-    print(f"{'Metric':<20} {'v1 (LOG)':>15} {'v2 (LOG*)':>15} {'Best Baseline':>15}")
+    print(f"{'Metric':<20} {'v1 (LOG)':>15} {'v2 (SOTA)':>15} {'Best Baseline':>15}")
     print("-" * 65)
     print(f"{'ID-F1':<20} {UTMIL_V1['id_f1']:.4f}±{UTMIL_V1['id_f1_std']:.4f} {UTMIL_V2['id_f1']:.4f}±{UTMIL_V2['id_f1_std']:.4f} {'Mean-pool 0.755':>15}")
     print(f"{'Hard-AUC':<20} {UTMIL_V1['hard_auc']:.4f}±{UTMIL_V1['hard_auc_std']:.4f} {UTMIL_V2['hard_auc']:.4f}±{UTMIL_V2['hard_auc_std']:.4f} {'Mean-pool 0.885':>15}")

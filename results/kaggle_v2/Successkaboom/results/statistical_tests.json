@@ -1,0 +1,82 @@
+{
+  "id_f1_v2_vs_v1": {
+    "bootstrap": {
+      "mean_diff": -0.001870813446853914,
+      "p_value_A_gt_B": 0.7535,
+      "ci_95": [
+        -0.005674587458745939,
+        0.001932960565038222
+      ],
+      "n_a": 2,
+      "n_b": 2,
+      "mean_a": 0.74305,
+      "std_a": 0.002850000000000019,
+      "mean_b": 0.7449208134468539,
+      "std_b": 0.0009537740118920612
+    },
+    "ttest": {
+      "t_statistic": -0.4918308608778982,
+      "p_value_two_sided": 0.70900685295323,
+      "mean_diff": -0.001870813446853914,
+      "n_a": 2,
+      "n_b": 2
+    }
+  },
+  "hard_auc_v2_vs_v1": {
+    "bootstrap": {
+      "mean_diff": 0.27661678082191776,
+      "p_value_A_gt_B": 0.0,
+      "ci_95": [
+        0.2454710616438357,
+        0.30776250000000005
+      ],
+      "n_a": 2,
+      "n_b": 2,
+      "mean_a": 0.8288,
+      "std_a": 0.06009999999999999,
+      "mean_b": 0.5521832191780822,
+      "std_b": 0.09124571917808216
+    },
+    "ttest": {
+      "t_statistic": 8.881374009709118,
+      "p_value_two_sided": 0.07137969479899654,
+      "mean_diff": 0.27661678082191776,
+      "n_a": 2,
+      "n_b": 2
+    }
+  },
+  "x_auc_v2_vs_v1": {
+    "mean_v2": 0.7369,
+    "mean_v1": 0.9812395113764977,
+    "note": "PENDING full 5-seed run \u2014 quick run X-AUC may be underestimated due to hard mining distribution shift"
+  },
+  "localization": {
+    "v2_attn_only": {
+      "hit@1": 0.1062,
+      "mrr": 0.2666,
+      "note": "attention-only, no GBM fusion \u2014 needs localization_ranker.py"
+    },
+    "v1_gbm_fusion": {
+      "hit@1": 0.8316831683168316,
+      "mrr": 0.8804737253923169,
+      "note": "clean GBM fusion from clean_results.json"
+    },
+    "old_2head_lambdamart": {
+      "hit@1": 0.832,
+      "mrr": 0.88,
+      "note": "REFERENCE from paper Table III \u2014 not re-run"
+    },
+    "gap_v1_vs_old": {
+      "hit@1_diff": -0.0003168316831683171,
+      "mrr_diff": 0.0004737253923169371,
+      "interpretation": "v1 GBM fusion is within 0.001 of LambdaMART \u2014 effectively equivalent"
+    }
+  },
+  "summary": {
+    "hard_auc_improvement": "+0.2766",
+    "id_f1_change": "-0.0019",
+    "x_auc_note": "PENDING full 5-seed GPU run",
+    "localization_note": "GBM fusion needed for fair comparison \u2014 attention-only not comparable",
+    "status": "PARTIAL \u2014 quick run (2 seeds). Full 5-seed GPU run required for final numbers."
+  }
+}

@@ -214,22 +214,5 @@
     "hard_auc_ci_contains_mean": true,
     "beats_recency_prior": true,
     "all_pass": true
-  },
-  "unifiedtmil_v2_sota": {
-    "id_f1": {
-      "mean": 0.7429,
-      "std": 0.0091
-    },
-    "hard_auc": {
-      "mean": 0.8683,
-      "std": 0.0742
-    },
-    "x_auc": {
-      "mean": 0.7639,
-      "std": 0.035
-    },
-    "loc_hit1": 0.8562,
-    "loc_mrr": 0.9153,
-    "is_sota": true
   }
 }

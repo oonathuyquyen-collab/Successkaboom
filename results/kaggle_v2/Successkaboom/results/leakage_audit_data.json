@@ -1,0 +1,40 @@
+{
+  "leakage_A": {
+    "description": "cp_reputation global vs LOO",
+    "gt_global_rep_mean": 1375.3757371524853,
+    "gt_loo_rep_mean": 1374.3757371524853,
+    "non_gt_global_rep_mean": 1299.2204742897393,
+    "non_gt_loo_rep_mean": 1299.2204742897393,
+    "perfect_sep_global": 0,
+    "perfect_sep_loo": 0,
+    "n_bags": 101
+  },
+  "leakage_B": {
+    "description": "Positional / final-tx leakage",
+    "total_gt_txs": 2374,
+    "gt_at_final_tx": 0,
+    "gt_in_last2_candidates": 127,
+    "gt_in_last2_pct": 0.05349620893007582,
+    "mean_bag_size": 65.67326732673267
+  },
+  "leakage_C": {
+    "description": "LambdaMART/GBM train feature leakage via global cp_reputation",
+    "lean_gbm_leaky": "cp_reputation computed globally, train features include test bag h's GT data",
+    "step23_clean": "rep_loo_train uses sum-minus-i trick, test bag completely excluded",
+    "lean_gbm_full_hit1": 1.0,
+    "step23_clean_hit1": 0.8316831683168316
+  },
+  "leakage_D": {
+    "description": "Candidate set analysis",
+    "gt_is_highest_amt_count": 35,
+    "gt_is_highest_amt_pct": 0.3465346534653465,
+    "n_bags": 101
+  },
+  "summary": {
+    "main_leakage_source": "cp_reputation computed globally in lean_localization_gbm.py; train features for bag i include test bag h's GT data",
+    "clean_pipeline": "step23_fusion_marginal.py with rep_loo_train",
+    "clean_hit1": 0.8316831683168316,
+    "leaky_hit1": 1.0,
+    "expected_clean_range": "0.83-0.88"
+  }
+}
