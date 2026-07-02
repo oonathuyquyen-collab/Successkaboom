@@ -7,7 +7,7 @@ Ablation study for UnifiedTMIL:
 Saves results to results/ablation_results.json
 """
 import sys, os, json, pickle, random, time
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src", "core"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 import numpy as np
 import torch
 import torch.nn as nn

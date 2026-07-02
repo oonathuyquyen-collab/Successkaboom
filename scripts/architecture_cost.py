@@ -32,7 +32,7 @@ RES  = os.path.join(ROOT, "results")
 TABLES = os.path.join(RES, "tables")
 os.makedirs(TABLES, exist_ok=True)
 
-sys.path.insert(0, os.path.join(ROOT, "src", "core"))
+sys.path.insert(0, os.path.join(ROOT, "src"))
 import vocab_def
 sys.modules['__main__'].Vocab = vocab_def.Vocab
 

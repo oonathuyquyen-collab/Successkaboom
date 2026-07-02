@@ -5,7 +5,7 @@ Uses results already computed and adds: feat_rep_only, final model, ensemble, le
 """
 
 import sys, os, json, pickle, random, time
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src", "core"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 import numpy as np
 import torch
 import torch.nn as nn
